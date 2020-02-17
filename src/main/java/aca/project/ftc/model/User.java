@@ -60,14 +60,6 @@ public class User extends Audit {
     @Column(unique = true)
     private String username;
 
-    public String getUsername() {
-        return this.email;
-    }
-
-    public void setUsername(String username) {
-        this.email = username;
-        this.username = username;
-    }
 
     private String industry;
 
@@ -99,6 +91,25 @@ public class User extends Audit {
     private List<Transaction> transaction = new ArrayList<>();
 
 
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "receiver", orphanRemoval = true)
+    private List<Notification> notificationReceived = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "sender", orphanRemoval = true)
+    private List<Notification> notificationSent = new ArrayList<>();
+
+
+
+    public void addNotificationReceived(Notification newNotification) {
+        notificationReceived.add(newNotification);
+        newNotification.setReceiver(this);
+    }
+    public void addNotificationSent(Notification newNotification) {
+        notificationSent.add(newNotification);
+        newNotification.setSender(this);
+    }
+
     public void addTransaction(Transaction newTransaction) {
         transaction.add(newTransaction);
         newTransaction.setUser(this);
@@ -127,6 +138,17 @@ public class User extends Audit {
         oldTransaction.setUser(null);
     }
 
+    public void removeNotificationReceived(Notification oldNotification) {
+        notificationReceived.remove(oldNotification);
+        oldNotification.setReceiver(null);
+    }
+
+
+    public void removeNotificationSent(Notification oldNotification) {
+        notificationSent.remove(oldNotification);
+        oldNotification.setSender(null);
+    }
+
     public List getProject() {
         return project;
     }
@@ -152,6 +174,32 @@ public class User extends Audit {
     public void removeUserProduct(UserProduct oldUserProduct) {
         userProduct.remove(oldUserProduct);
         oldUserProduct.setUser(null);
+    }
+
+    public List<Notification> getNotificationReceived() {
+        return notificationReceived;
+    }
+
+    public void setNotificationReceived(List<Notification> notificationReceived) {
+        this.notificationReceived = notificationReceived;
+    }
+
+
+    public List<Notification> getNotificationSent() {
+        return notificationSent;
+    }
+
+    public void setNotificationSent(List<Notification> notificationSent) {
+        this.notificationSent = notificationSent;
+    }
+
+    public String getUsername() {
+        return this.email;
+    }
+
+    public void setUsername(String username) {
+        this.email = username;
+        this.username = username;
     }
 
     public Long getId() {
@@ -290,18 +338,6 @@ public class User extends Audit {
         this.gender = gender;
     }
 
-//    public Set<Notification> getNotification() {
-//        return notification;
-//    }
-//
-//    public void setNotification(Set<Notification> notification) {
-//        this.notification = notification;
-//    }
-//
-//    public void addNotification(Notification newNotification) {
-//        notification.add(newNotification);
-//    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -359,6 +395,9 @@ public class User extends Audit {
                 ", userProduct=" + userProduct +
                 ", project=" + project +
                 ", transaction=" + transaction +
+                ", notificationReceived=" + notificationReceived +
+                ", notificationSent=" + notificationSent +
                 '}';
     }
+
 }
