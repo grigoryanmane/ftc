@@ -3,33 +3,34 @@ package aca.project.ftc.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "notifications")
 public class Notification extends Audit {
-    private enum Status{
-        PENDING,ACCEPTED,REJECTED
+    private enum Status {
+        PENDING, ACCEPTED, REJECTED
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "receiver_id")
     private User receiver;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User sender;
 
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "user_product_id")
+    @MapsId("id")
+    @JoinColumns({@JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "product_id",  referencedColumnName = "product_id"),
+            @JoinColumn(name = "user_product_id",  referencedColumnName = "id")  })
     private UserProduct userProduct;
 
     @Size(max = 150)

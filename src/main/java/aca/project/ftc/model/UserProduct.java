@@ -10,18 +10,16 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user_product")
-public class UserProduct extends Audit implements Serializable {
+public class UserProduct extends Audit  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
