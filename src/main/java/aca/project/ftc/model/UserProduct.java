@@ -34,8 +34,6 @@ public class UserProduct extends Audit  {
     @NotNull
     private Double amount = 0.0;
 
-
-
     @NotNull
     private Double quantity = 0.0;
 
