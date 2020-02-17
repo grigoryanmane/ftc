@@ -4,6 +4,8 @@ package aca.project.ftc.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,11 @@ public class UserProduct extends Audit implements Serializable {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "userProduct", orphanRemoval = true)
+    private List<Notification> userProductNotification = new ArrayList<>();
 
     private String description;
 
@@ -84,12 +91,30 @@ public class UserProduct extends Audit implements Serializable {
         this.quantity = quantity;
     }
 
+    public List<Notification> getUserProductNotification() {
+        return userProductNotification;
+    }
+
+    public void setUserProductNotification(List<Notification> userProductNotification) {
+        this.userProductNotification = userProductNotification;
+    }
+
+    public void addUserProductNotification(Notification newNotification){
+        userProductNotification.add(newNotification);
+        newNotification.setUserProduct(this);
+    }
+
+    public void  removeUserProductNotification(Notification oldNotification){
+        userProductNotification.remove(oldNotification);
+        oldNotification.setUserProduct(null);
+    }
     @Override
     public String toString() {
         return "UserProduct{" +
                 "id=" + id +
                 ", user=" + user +
                 ", product=" + product +
+                ", userProductNotification=" + userProductNotification +
                 ", description='" + description + '\'' +
                 ", amount=" + amount +
                 ", quantity=" + quantity +
