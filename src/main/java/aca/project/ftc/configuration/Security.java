@@ -33,15 +33,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic()
-                .and()
-                .logout()
-                .logoutUrl("/api/v1/logout")
-                .logoutSuccessUrl("/home")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID");
-
+                .httpBasic();
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
