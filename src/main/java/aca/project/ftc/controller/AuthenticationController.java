@@ -16,7 +16,6 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
 
-
     @RequestMapping(value = "api/v1/signup", method = RequestMethod.POST)
     public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequest signupRequest) {
         String token = authenticationService.signup(signupRequest);
