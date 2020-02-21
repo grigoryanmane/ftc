@@ -1,6 +1,6 @@
 package aca.project.ftc.auth;
 
-import aca.project.ftc.repository.UserRepository;
+import aca.project.ftc.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +19,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<aca.project.ftc.model.User> user = userRepository.findByUsername(username);
-
+        Optional<UserModel> user = userRepository.findByUsername(username);
+        //TODO:: Check whether this is the correct way of loading user and its details for authentication
         if (user.isPresent()) {
             return new User(user.get().getUsername(),user.get().getPassword(),
                     new ArrayList<>());
