@@ -1,4 +1,4 @@
 package aca.project.ftc.exception;
 
-public class UserNotFound extends Exception {
+public class UserNotFound extends RuntimeException {
 }

@@ -52,23 +52,5 @@ public class UserProductModel extends BaseModel {
         oldNotification.setUserProduct(null);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserProductModel)) return false;
-        UserProductModel that = (UserProductModel) o;
-        return getId().equals(that.getId()) &&
-                getUser().equals(that.getUser()) &&
-                getProduct().equals(that.getProduct()) &&
-                getDescription().equals(that.getDescription()) &&
-                getAmount().equals(that.getAmount()) &&
-                getQuantity().equals(that.getQuantity());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getUser(), getProduct(), getDescription(), getAmount(), getQuantity());
-    }
-
 
 }

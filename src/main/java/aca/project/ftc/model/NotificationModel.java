@@ -31,33 +31,16 @@ public class NotificationModel extends BaseModel {
 
     @ManyToOne
     @MapsId("id")
-    @JoinColumns(@JoinColumn(name = "user_product_id",  referencedColumnName = "id"))
+    @JoinColumn(name = "user_product_id",  referencedColumnName = "id")
     private UserProductModel userProduct;
 
     @Size(max = 150)
     private String message;
 
+    //TODO::delete this field
     private Boolean active = true;
 
     private NotificationStatus status = NotificationStatus.PENDING;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NotificationModel)) return false;
-        NotificationModel that = (NotificationModel) o;
-        return getId().equals(that.getId()) &&
-                getReceiver().equals(that.getReceiver()) &&
-                getSender().equals(that.getSender()) &&
-                getUserProduct().equals(that.getUserProduct()) &&
-                Objects.equals(getMessage(), that.getMessage()) &&
-                getActive().equals(that.getActive()) &&
-                getStatus() == that.getStatus();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getReceiver(), getSender(), getUserProduct(), getMessage(), getActive(), getStatus());
-    }
 
 }

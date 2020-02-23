@@ -35,9 +35,6 @@ public class UserModel extends BaseModel {
     @NotNull
     @Size(max = 150)
     @Column(unique = true)
-    private String email;
-
-    @Column(unique = true)
     private String username;
 
     @NotNull

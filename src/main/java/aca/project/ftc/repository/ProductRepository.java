@@ -1,16 +1,16 @@
 package aca.project.ftc.repository;
 
-import aca.project.ftc.model.Product;
-import aca.project.ftc.model.UserProduct;
+import aca.project.ftc.model.ProductModel;
+import aca.project.ftc.model.UserProductModel;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface ProductRepository extends CrudRepository<ProductModel, Long> {
 
-    List<Product> findAllByUserProduct(UserProduct userProduct);
+    List<ProductModel> findAllByUserProduct(UserProductModel userProduct);
 
-    Optional<Product> findAllByNameContaining(String name);
+    Optional<ProductModel> findAllByNameContaining(String name);
 
 }

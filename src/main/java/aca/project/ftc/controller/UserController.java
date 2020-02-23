@@ -21,21 +21,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
     private UserRepository userRepository;
 
 
-    @RequestMapping(value = "/api/v1/user/edit/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> editUser(@RequestBody UserEditRequest userEditRequest, @PathVariable Long id) {
-        Optional<UserModel> user = userService.editUser(userEditRequest, id);
-        if (user.isPresent()) {
-            UserModel editUser = user.get();
-            return ResponseEntity.ok(new UserEditResponseDto(editUser.getFirstName(), editUser.getLastName(), editUser.getPhoneNumber(),
-                    editUser.getRegion()
-            ));
-        } else {
-            throw new UserNotFound();
-        }
-
-    }
 
 }
