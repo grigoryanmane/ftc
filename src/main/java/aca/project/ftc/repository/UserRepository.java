@@ -10,6 +10,8 @@ public interface UserRepository extends CrudRepository<UserModel, Long> {
 
     Optional<UserModel> findByUsername(String username);
 
+    Optional<UserModel> findAllProductById(Long id);
+
 
 //    List<User> findByNotification(Long id);
 //    List<Notification> findByIdOrderByNotification(Long id);

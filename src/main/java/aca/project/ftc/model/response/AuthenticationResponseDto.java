@@ -5,13 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SignupResponseDto {
+public class AuthenticationResponseDto {
 
     private User user;
 
     private String token;
 
-    public SignupResponseDto(String token, User user) {
+    public AuthenticationResponseDto(String token, User user) {
         this.token = token;
         this.user = user;
     }

@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Objects;
 
 
 @Entity
@@ -36,9 +35,6 @@ public class NotificationModel extends BaseModel {
 
     @Size(max = 150)
     private String message;
-
-    //TODO::delete this field
-    private Boolean active = true;
 
     private NotificationStatus status = NotificationStatus.PENDING;
 

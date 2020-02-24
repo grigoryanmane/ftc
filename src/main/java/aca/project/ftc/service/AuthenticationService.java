@@ -11,7 +11,7 @@ import aca.project.ftc.model.request.LoginRequest;
 import aca.project.ftc.model.request.SignupRequest;
 import aca.project.ftc.model.UserModel;
 import aca.project.ftc.model.request.UserEditRequest;
-import aca.project.ftc.model.response.SignupResponseDto;
+import aca.project.ftc.model.response.AuthenticationResponseDto;
 import aca.project.ftc.model.response.User;
 import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.UserProductRepository;
@@ -54,7 +54,7 @@ public class AuthenticationService {
     @Autowired
     private UserProductRepository userProductRepository;
 
-    public SignupResponseDto signup(SignupRequest signupRequest) {
+    public AuthenticationResponseDto signup(SignupRequest signupRequest) {
         UserModel user = new UserModel();
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         user.setLastName(signupRequest.getLastName());
@@ -72,28 +72,28 @@ public class AuthenticationService {
             authenticate(user.getUsername(), signupRequest.getPassword());
         } catch (Exception e) {
             //TODO: Log the exception
-            throw new UserNotFound();
+            throw new UserNotFound("INVALID_CREDENTIALS");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtHelper.generateToken(userDetails);
         User userData = getUserResponseData(user);
-        return new SignupResponseDto(token, userData);
+        return new AuthenticationResponseDto(token, userData);
     }
 
-    public SignupResponseDto login(LoginRequest loginRequest) {
+    public AuthenticationResponseDto login(LoginRequest loginRequest) {
         try {
             authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         } catch (Exception e) {
-            //TODO Log the exception and throe correct exception
-            throw new UserNotFound();
+            //TODO Log the exception and throw correct exception
+            throw new UserNotFound("INVALID_CREDENTIALS");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
         String token = jwtHelper.generateToken(userDetails);
         Optional<UserModel> userModel = userRepository.findByUsername(loginRequest.getUsername());
         User userDate = getUserResponseData(userModel.get());
-        return new SignupResponseDto(token, userDate);
+        return new AuthenticationResponseDto(token, userDate);
     }
 
     private void authenticate(String username, String password) throws Exception {
@@ -109,8 +109,12 @@ public class AuthenticationService {
     public Optional<UserModel> editUser(UserEditRequest userEditRequest, Long id) {
         //TODO::CHANGE THE LOGIC IN HERE
         Optional<UserModel> user = userRepository.findById(id);
-        try {
-            authenticate(user.get().getUsername(), userEditRequest.getPassword());
+        if (user.isPresent()) {
+            try {
+                authenticate(user.get().getUsername(), userEditRequest.getPassword());
+            } catch (Exception e) {
+                throw new UserNotFound("INVALID_CREDENTIALS");
+            }
             if (!userEditRequest.getFirstName().isEmpty()) {
                 user.get().setFirstName(userEditRequest.getFirstName());
             }
@@ -123,9 +127,10 @@ public class AuthenticationService {
             if (!(userEditRequest.getRegion() == null)) {
                 user.get().setRegion(userEditRequest.getRegion());
             }
+            userRepository.save(user.get());
             return user;
-        } catch (Exception e) {
-            throw new UserNotFound();
+        } else {
+            throw new UserNotFound("USER_NOT_FOUND");
         }
 
     }
@@ -135,16 +140,16 @@ public class AuthenticationService {
         if (user.isPresent() && user.get().getUsername().equals(deleteUserRequest.getUsername())) {
             try {
                 authenticate(user.get().getUsername(), deleteUserRequest.getPassword());
-                notificationRepository.deleteAllByReceiverId(id);
-                notificationRepository.deleteAllBySenderId(id);
-                userProductRepository.deleteAllByUserId(id);
-                userRepository.deleteById(id);
             } catch (Exception e) {
-                //TODO:: CHANGE TO UNAUTHORIZED EXCEPTION
-                throw new UnauthorizedRequest();
+                throw new UserNotFound("INVALID_CREDENTIALS");
             }
+            notificationRepository.deleteAllByReceiverId(id);
+            notificationRepository.deleteAllBySenderId(id);
+            userProductRepository.deleteAllByUserId(id);
+            userRepository.deleteById(id);
+
         } else {
-            throw new UserNotFound();
+            throw new UserNotFound("User Not Found");
         }
         //TODO::SHOULD I CHANGE THIS? Do not forget to remove token from front end and logout the user
         return "User Successfully Deleted";

@@ -1,6 +1,7 @@
 package aca.project.ftc.model;
 
 
+import aca.project.ftc.model.constants.NotificationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,13 +42,14 @@ public class UserProductModel extends BaseModel {
     @NotNull
     private Double quantity = 0.0;
 
+    private Boolean isActive = true;
 
-    public void addUserProductNotification(NotificationModel newNotification){
+    public void addUserProductNotification(NotificationModel newNotification) {
         userProductNotification.add(newNotification);
         newNotification.setUserProduct(this);
     }
 
-    public void  removeUserProductNotification(NotificationModel oldNotification){
+    public void removeUserProductNotification(NotificationModel oldNotification) {
         userProductNotification.remove(oldNotification);
         oldNotification.setUserProduct(null);
     }

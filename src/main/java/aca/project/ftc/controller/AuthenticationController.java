@@ -5,14 +5,11 @@ import aca.project.ftc.model.request.DeleteUserRequest;
 import aca.project.ftc.model.request.LoginRequest;
 import aca.project.ftc.model.request.SignupRequest;
 import aca.project.ftc.model.request.UserEditRequest;
+import aca.project.ftc.model.response.AuthenticationResponseDto;
 import aca.project.ftc.model.response.MessageResponseDto;
-import aca.project.ftc.model.response.SignupResponseDto;
 import aca.project.ftc.model.response.UserEditResponseDto;
-import aca.project.ftc.repository.UserRepository;
 import aca.project.ftc.service.AuthenticationService;
-import aca.project.ftc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +24,14 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @RequestMapping(value = "api/v1/signup", method = RequestMethod.POST)
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequest signupRequest) {
-        SignupResponseDto result = authenticationService.signup(signupRequest);
+    public ResponseEntity<AuthenticationResponseDto> signup(@RequestBody SignupRequest signupRequest) {
+        AuthenticationResponseDto result = authenticationService.signup(signupRequest);
         return ResponseEntity.ok(result);
     }
 
     @RequestMapping(value = "/api/v1/login", method = RequestMethod.POST)
-    public ResponseEntity<SignupResponseDto> login(@RequestBody LoginRequest loginRequest) {
-        SignupResponseDto result = authenticationService.login(loginRequest);
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody LoginRequest loginRequest) {
+        AuthenticationResponseDto result = authenticationService.login(loginRequest);
         return ResponseEntity.ok(result);
     }
 
@@ -52,7 +49,6 @@ public class AuthenticationController {
                 editUser.getRegion()
         ));
     }
-
 
     //TODO:: REMOVE THIS IN THE FUTURE, THIS IS HERE FOR TESTING PURPOSES ONLY
     @RequestMapping(value = "/api/v1/test", method = RequestMethod.GET)
