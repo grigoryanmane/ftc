@@ -27,6 +27,4 @@ public class User {
     private String region;
     private String gender;
 
-
-
 }
