@@ -71,10 +71,33 @@ public class UserService {
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
-
-//    public UserProductResponseDto editUserProduct(UserProductRequest userProductRequest) {
-//
-//    }
+    public UserProductResponseDto editUserProduct(UserProductRequest userProductRequest) {
+        UserProductModel userProductModel = new UserProductModel();
+        try {
+            if (userProductRepository.findById(userProductRequest.getId()).isPresent()) {
+                userProductModel.setId(userProductRequest.getId());
+            }
+            if (userRepository.findById(userProductRequest.getUserId()).isPresent()) {
+                userProductModel.setUser(userRepository.findById(userProductRequest.getUserId()).get());
+            }
+            if (productRepository.findById(userProductRequest.getProductId()).isPresent()) {
+                userProductModel.setProduct((productRepository.findById(userProductRequest.getProductId())).get());
+            }
+            if (userProductRequest.getAmount() != null) {
+                userProductModel.setAmount(userProductRequest.getAmount());
+            }
+            if (userProductRequest.getQuantity() != null) {
+                userProductModel.setQuantity(userProductRequest.getQuantity());
+            }
+            if (userProductRequest.getDescription() != null) {
+                userProductModel.setDescription(userProductRequest.getDescription());
+            }
+            userProductRepository.save(userProductModel);
+            return setUserProductDto(userProductModel);
+        } catch (Exception e) {
+            throw new UserNotFound("INVALID_REQUEST_BODY");
+        }
+    }
 
     public UserProductResponseDto setUserProductDto(UserProductModel userProductModel) {
         UserProductResponseDto userProductResponseDto = new UserProductResponseDto();

@@ -20,7 +20,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public abstract class BaseModel {
+public class BaseModel {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)

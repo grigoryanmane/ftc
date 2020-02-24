@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserProductRequest {
-
+    private Long id;
     private Long userId;
     private Long productId;
     private String description;

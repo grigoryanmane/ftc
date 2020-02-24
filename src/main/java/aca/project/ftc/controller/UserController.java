@@ -42,6 +42,12 @@ public class UserController {
         return ResponseEntity.ok(userProductResponseDto);
     }
 
+
+    @RequestMapping(value = "/api/v1/user/product/edit", method = RequestMethod.POST)
+    public ResponseEntity<UserProductResponseDto> editUserProduct(@RequestBody UserProductRequest userProductRequest) {
+        UserProductResponseDto userProductResponseDto = userService.editUserProduct(userProductRequest);
+        return ResponseEntity.ok(userProductResponseDto);
+    }
     @RequestMapping(value = "/api/v1/user/{id}", method = RequestMethod.POST)
     public ResponseEntity<User> getUserDara(@PathVariable Long id) {
         User user = userService.getUserData(id);
