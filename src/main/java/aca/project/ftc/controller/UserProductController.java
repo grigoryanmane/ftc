@@ -2,7 +2,7 @@ package aca.project.ftc.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 
 public class UserProductController {
 }
