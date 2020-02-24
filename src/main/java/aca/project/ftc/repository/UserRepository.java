@@ -1,15 +1,17 @@
 package aca.project.ftc.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import aca.project.ftc.model.User;
+import aca.project.ftc.model.UserModel;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<User, Long> {
-    Optional<User> findById(Long id);
+public interface UserRepository extends CrudRepository<UserModel, Long> {
+    Optional<UserModel> findById(Long id);
 
-    Optional<User> findByUsername(String username);
+    Optional<UserModel> findByUsername(String username);
+
+    Optional<UserModel> findAllProductById(Long id);
+
 
 //    List<User> findByNotification(Long id);
 //    List<Notification> findByIdOrderByNotification(Long id);

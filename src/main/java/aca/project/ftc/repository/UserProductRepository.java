@@ -1,25 +1,24 @@
 package aca.project.ftc.repository;
 
-import aca.project.ftc.model.UserProduct;
-import org.springframework.beans.factory.annotation.Autowired;
+import aca.project.ftc.model.UserProductModel;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserProductRepository extends CrudRepository<UserProduct, Long> {
+public interface UserProductRepository extends CrudRepository<UserProductModel, Long> {
 
-    List<UserProduct> findByUserId(Long id);
+    List<UserProductModel> findByUserId(Long id);
 
-    List<UserProduct> findByProductId(Long id);
+    List<UserProductModel> findByProductId(Long id);
 
-    Optional<UserProduct> findByAmountIsGreaterThanEqual(Double amount);
+    Optional<UserProductModel> findByAmountIsGreaterThanEqual(Double amount);
 
-    Optional<UserProduct> findByAmountIsLessThanEqual(Double amount);
+    Optional<UserProductModel> findByAmountIsLessThanEqual(Double amount);
 
-    Optional<UserProduct> findByQuantityIsGreaterThan(Double quantity);
+    Optional<UserProductModel> findByQuantityIsGreaterThan(Double quantity);
 
-    Optional<UserProduct> findByQuantityIsLessThanEqual(Double quantity);
+    Optional<UserProductModel> findByQuantityIsLessThanEqual(Double quantity);
 
-
+    void deleteAllByUserId(Long id);
 }
