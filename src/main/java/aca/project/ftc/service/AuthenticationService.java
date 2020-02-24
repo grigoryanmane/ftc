@@ -2,10 +2,8 @@ package aca.project.ftc.service;
 
 import aca.project.ftc.auth.JwtHelper;
 import aca.project.ftc.auth.JwtUserDetailsService;
-import aca.project.ftc.exception.UnauthorizedRequest;
 import aca.project.ftc.exception.UserNotFound;
-import aca.project.ftc.model.constants.Gender;
-import aca.project.ftc.model.constants.Region;
+import java.text.DateFormat;
 import aca.project.ftc.model.request.DeleteUserRequest;
 import aca.project.ftc.model.request.LoginRequest;
 import aca.project.ftc.model.request.SignupRequest;
@@ -17,9 +15,6 @@ import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -156,7 +151,7 @@ public class AuthenticationService {
 
     }
 
-    private User getUserResponseData(UserModel userModel) {
+    public User getUserResponseData(UserModel userModel) {
         User user = new User();
         user.setId(userModel.getId());
         user.setUsername(userModel.getUsername());

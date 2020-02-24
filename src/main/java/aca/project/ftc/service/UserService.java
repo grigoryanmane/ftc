@@ -1,8 +1,12 @@
 package aca.project.ftc.service;
 
 
+import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.model.UserModel;
 import aca.project.ftc.model.UserProductModel;
 import aca.project.ftc.model.request.UserProductRequest;
+import aca.project.ftc.model.response.AuthenticationResponseDto;
+import aca.project.ftc.model.response.User;
 import aca.project.ftc.model.response.UserProductResponseDto;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -25,6 +30,9 @@ public class UserService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     public List<UserProductResponseDto> userProducts(Long id) {
         List<UserProductModel> userProductModel = userProductRepository.findByUserId(id);
@@ -53,6 +61,14 @@ public class UserService {
         userProductRepository.save(userProductModel);
         return setUserProductDto(userProductModel);
 
+    }
+
+    public User getUserData(Long id) {
+        Optional<UserModel> userModel = userRepository.findById(id);
+        if (userModel.isPresent()) {
+            return authenticationService.getUserResponseData(userModel.get());
+        }
+        throw new UserNotFound("USER_NOT_FOUND");
     }
 
 

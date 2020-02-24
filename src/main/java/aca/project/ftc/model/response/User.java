@@ -1,11 +1,10 @@
 package aca.project.ftc.model.response;
 
-import aca.project.ftc.model.constants.Gender;
-import aca.project.ftc.model.constants.Region;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Period;
+
 import java.util.Date;
 
 @Getter
@@ -16,7 +15,10 @@ public class User {
     private String username;
     private String firstName;
     private String lastName;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthDate;
+
     private String phoneNumber;
     private Boolean isCompany;
     private String companyName;
@@ -24,6 +26,7 @@ public class User {
     private int ratingCount;
     private String region;
     private String gender;
+
 
 
 }
