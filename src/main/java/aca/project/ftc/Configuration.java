@@ -9,4 +9,7 @@ public class Configuration {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         return entityManagerFactoryBean.getNativeEntityManagerFactory();
     }
+
+
 }
+

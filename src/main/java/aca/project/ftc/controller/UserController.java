@@ -21,7 +21,7 @@ import java.util.Optional;
 
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*",exposedHeaders= "Access-Control-Expose-Headers", allowedHeaders="*" )
 public class UserController {
 
     @Autowired
