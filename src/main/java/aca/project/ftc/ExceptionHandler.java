@@ -1,4 +1,4 @@
-package t;
+package aca.project.ftc;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
