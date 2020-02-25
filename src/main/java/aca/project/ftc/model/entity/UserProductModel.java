@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_product")
 @Getter
 @Setter
+@Table(name = "user_product")
 public class UserProductModel extends BaseModel {
 
     @Id

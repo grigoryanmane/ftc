@@ -29,13 +29,6 @@ public class AuthenticationController {
     }
 
 
-
-    //TODO:: REMOVE THIS IN THE FUTURE, THIS IS HERE FOR TESTING PURPOSES ONLY
-    @RequestMapping(value = "/api/v1/test", method = RequestMethod.GET)
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok("hello");
-    }
-
     //TODO:: WHERE THIS NEEDS TO BE IN ORDER TO WORK PROPERLY, WHEN NO TOKEN IS AVAILABLE OR TOKEN IS EXPIRED
     @ExceptionHandler(BadCredentialsException.class)
     public String authError() {
