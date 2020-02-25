@@ -3,12 +3,11 @@ package aca.project.ftc.service;
 import aca.project.ftc.auth.JwtHelper;
 import aca.project.ftc.auth.JwtUserDetailsService;
 import aca.project.ftc.exception.UserNotFound;
-import aca.project.ftc.model.dto.request.DeleteUserRequest;
-import aca.project.ftc.model.dto.request.LoginRequest;
-import aca.project.ftc.model.dto.request.SignupRequest;
+import aca.project.ftc.model.dto.request.user.SignupRequest;
+import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
 import aca.project.ftc.model.entity.UserModel;
-import aca.project.ftc.model.dto.request.UserEditRequest;
-import aca.project.ftc.model.dto.response.AuthenticationResponseDto;
+import aca.project.ftc.model.dto.request.user.UserEditRequest;
+import aca.project.ftc.model.dto.response.user.AuthenticationResponseDto;
 import aca.project.ftc.model.dto.response.User;
 import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.UserProductRepository;
@@ -75,17 +74,17 @@ public class AuthenticationService {
         return new AuthenticationResponseDto(userData, token);
     }
 
-    public AuthenticationResponseDto login(LoginRequest loginRequest) {
+    public AuthenticationResponseDto login(AuthenticationRequestDto authenticationRequestDto) {
         try {
-            authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+            authenticate(authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword());
         } catch (Exception e) {
             //TODO Log the exception and throw correct exception
             throw new UserNotFound("INVALID_CREDENTIALS");
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDto.getUsername());
         String token = jwtHelper.generateToken(userDetails);
-        Optional<UserModel> userModel = userRepository.findByUsername(loginRequest.getUsername());
+        Optional<UserModel> userModel = userRepository.findByUsername(authenticationRequestDto.getUsername());
         User userData = getUserResponseData(userModel.get());
         return new AuthenticationResponseDto(userData, token);
     }
@@ -116,11 +115,11 @@ public class AuthenticationService {
 
     }
 
-    public String deleteUser(DeleteUserRequest deleteUserRequest, Long id) {
+    public String deleteUser(AuthenticationRequestDto authenticationRequestDto, Long id) {
         Optional<UserModel> user = userRepository.findById(id);
-        if (user.isPresent() && user.get().getUsername().equals(deleteUserRequest.getUsername())) {
+        if (user.isPresent() && user.get().getUsername().equals(authenticationRequestDto.getUsername())) {
             try {
-                authenticate(user.get().getUsername(), deleteUserRequest.getPassword());
+                authenticate(user.get().getUsername(), authenticationRequestDto.getPassword());
             } catch (Exception e) {
                 throw new UserNotFound("INVALID_CREDENTIALS");
             }

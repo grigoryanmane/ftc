@@ -4,7 +4,7 @@ package aca.project.ftc.service;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.model.entity.UserProductModel;
-import aca.project.ftc.model.dto.request.UserProductRequest;
+import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.User;
 import aca.project.ftc.model.dto.response.UserProductResponseDto;
 import aca.project.ftc.repository.ProductRepository;
@@ -51,14 +51,14 @@ public class UserService {
         }
     }
 
-    public UserProductResponseDto addUserProduct(UserProductRequest userProductRequest) {
+    public UserProductResponseDto addUserProduct(ProductRequestDto productRequestDto) {
         UserProductModel userProductModel = new UserProductModel();
         //TODO:: SHOULD I DO CHECKS FOR isPresent()??
-        userProductModel.setProduct(productRepository.findById(userProductRequest.getProductId()).get());
-        userProductModel.setUser(userRepository.findById(userProductRequest.getUserId()).get());
-        userProductModel.setAmount(userProductRequest.getAmount());
-        userProductModel.setQuantity(userProductRequest.getQuantity());
-        userProductModel.setDescription(userProductRequest.getDescription());
+        userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
+        userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
+        userProductModel.setAmount(productRequestDto.getAmount());
+        userProductModel.setQuantity(productRequestDto.getQuantity());
+        userProductModel.setDescription(productRequestDto.getDescription());
         userProductRepository.save(userProductModel);
         return setUserProductDto(userProductModel);
 
@@ -72,26 +72,26 @@ public class UserService {
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
-    public UserProductResponseDto editUserProduct(UserProductRequest userProductRequest) {
+    public UserProductResponseDto editUserProduct(ProductRequestDto productRequestDto) {
         UserProductModel userProductModel = new UserProductModel();
         try {
-            if (userProductRepository.findById(userProductRequest.getId()).isPresent()) {
-                userProductModel.setId(userProductRequest.getId());
+            if (userProductRepository.findById(productRequestDto.getId()).isPresent()) {
+                userProductModel.setId(productRequestDto.getId());
             }//TODO can be replaced with exists
-            if (userRepository.findById(userProductRequest.getUserId()).isPresent()) {
-                userProductModel.setUser(userRepository.findById(userProductRequest.getUserId()).get());
+            if (userRepository.findById(productRequestDto.getUserId()).isPresent()) {
+                userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
             }
-            if (productRepository.findById(userProductRequest.getProductId()).isPresent()) {
-                userProductModel.setProduct((productRepository.findById(userProductRequest.getProductId())).get());
+            if (productRepository.findById(productRequestDto.getProductId()).isPresent()) {
+                userProductModel.setProduct((productRepository.findById(productRequestDto.getProductId())).get());
             }
-            if (userProductRequest.getAmount() != null) {
-                userProductModel.setAmount(userProductRequest.getAmount());
+            if (productRequestDto.getAmount() != null) {
+                userProductModel.setAmount(productRequestDto.getAmount());
             }
-            if (userProductRequest.getQuantity() != null) {
-                userProductModel.setQuantity(userProductRequest.getQuantity());
+            if (productRequestDto.getQuantity() != null) {
+                userProductModel.setQuantity(productRequestDto.getQuantity());
             }
-            if (userProductRequest.getDescription() != null) {
-                userProductModel.setDescription(userProductRequest.getDescription());
+            if (productRequestDto.getDescription() != null) {
+                userProductModel.setDescription(productRequestDto.getDescription());
             }
             userProductRepository.save(userProductModel);
             return setUserProductDto(userProductModel);

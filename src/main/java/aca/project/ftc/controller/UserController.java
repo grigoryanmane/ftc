@@ -1,10 +1,10 @@
 package aca.project.ftc.controller;
 
 
+import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
 import aca.project.ftc.model.dto.response.User;
 import aca.project.ftc.model.entity.UserModel;
-import aca.project.ftc.model.dto.request.DeleteUserRequest;
-import aca.project.ftc.model.dto.request.UserEditRequest;
+import aca.project.ftc.model.dto.request.user.UserEditRequest;
 import aca.project.ftc.model.dto.response.MessageResponseDto;
 import aca.project.ftc.model.dto.response.UserEditResponseDto;
 import aca.project.ftc.service.AuthenticationService;
@@ -26,8 +26,8 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<MessageResponseDto> deleteUser(@RequestBody DeleteUserRequest deleteUserRequest, @PathVariable Long id) {
-        String response = authenticationService.deleteUser(deleteUserRequest, id);
+    public ResponseEntity<MessageResponseDto> deleteUser(@RequestBody AuthenticationRequestDto authenticationRequestDto, @PathVariable Long id) {
+        String response = authenticationService.deleteUser(authenticationRequestDto, id);
         return ResponseEntity.ok(new MessageResponseDto(response));
     }
 

@@ -1,5 +1,6 @@
-package aca.project.ftc.model.dto.response;
+package aca.project.ftc.model.dto.response.user;
 
+import aca.project.ftc.model.dto.response.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +13,5 @@ public class AuthenticationResponseDto {
     private User user;
 
     private String token;
-
-//    public AuthenticationResponseDto(String token, User user) {
-//
-//    }
 
 }

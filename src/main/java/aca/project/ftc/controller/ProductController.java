@@ -1,7 +1,6 @@
 package aca.project.ftc.controller;
 
-import aca.project.ftc.model.dto.request.UserProductRequest;
-import aca.project.ftc.model.dto.response.User;
+import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.UserProductResponseDto;
 import aca.project.ftc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,15 @@ public class ProductController {
     private UserService userService;
 
     @PostMapping(value = "/add")
-    public ResponseEntity<UserProductResponseDto> addUserProduct(@RequestBody UserProductRequest userProductRequest) {
-        UserProductResponseDto userProductResponseDto = userService.addUserProduct(userProductRequest);
+    public ResponseEntity<UserProductResponseDto> addUserProduct(@RequestBody ProductRequestDto productRequestDto) {
+        UserProductResponseDto userProductResponseDto = userService.addUserProduct(productRequestDto);
         return ResponseEntity.ok(userProductResponseDto);
     }
 
 
-    @DeleteMapping(value = "/api/v1/user/product")
-    public ResponseEntity<UserProductResponseDto> editUserProduct(@RequestBody UserProductRequest userProductRequest) {
-        UserProductResponseDto userProductResponseDto = userService.editUserProduct(userProductRequest);
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<UserProductResponseDto> editUserProduct(@RequestBody ProductRequestDto productRequestDto, @Long id) {
+        UserProductResponseDto userProductResponseDto = userService.editUserProduct(productRequestDto);
         return ResponseEntity.ok(userProductResponseDto);
     }
 

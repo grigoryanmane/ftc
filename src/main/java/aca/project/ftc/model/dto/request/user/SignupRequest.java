@@ -1,4 +1,4 @@
-package aca.project.ftc.model.dto.request;
+package aca.project.ftc.model.dto.request.user;
 
 import aca.project.ftc.model.constants.Gender;
 import aca.project.ftc.model.constants.Region;
