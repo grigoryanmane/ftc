@@ -2,12 +2,11 @@ package aca.project.ftc.service;
 
 
 import aca.project.ftc.exception.UserNotFound;
-import aca.project.ftc.model.UserModel;
-import aca.project.ftc.model.UserProductModel;
-import aca.project.ftc.model.request.UserProductRequest;
-import aca.project.ftc.model.response.AuthenticationResponseDto;
-import aca.project.ftc.model.response.User;
-import aca.project.ftc.model.response.UserProductResponseDto;
+import aca.project.ftc.model.entity.UserModel;
+import aca.project.ftc.model.entity.UserProductModel;
+import aca.project.ftc.model.dto.request.UserProductRequest;
+import aca.project.ftc.model.dto.response.User;
+import aca.project.ftc.model.dto.response.UserProductResponseDto;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
@@ -33,6 +32,8 @@ public class UserService {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    //TODO:: Add three calls here: checkUsername,addNotification,checkNotification
 
     public List<UserProductResponseDto> userProducts(Long id) {
         List<UserProductModel> userProductModel = userProductRepository.findByUserId(id);
@@ -76,7 +77,7 @@ public class UserService {
         try {
             if (userProductRepository.findById(userProductRequest.getId()).isPresent()) {
                 userProductModel.setId(userProductRequest.getId());
-            }
+            }//TODO can be replaced with exists
             if (userRepository.findById(userProductRequest.getUserId()).isPresent()) {
                 userProductModel.setUser(userRepository.findById(userProductRequest.getUserId()).get());
             }

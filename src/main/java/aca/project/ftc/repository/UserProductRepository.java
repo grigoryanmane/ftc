@@ -1,6 +1,6 @@
 package aca.project.ftc.repository;
 
-import aca.project.ftc.model.UserProductModel;
+import aca.project.ftc.model.entity.UserProductModel;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

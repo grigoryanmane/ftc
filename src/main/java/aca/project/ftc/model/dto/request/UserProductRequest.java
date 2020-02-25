@@ -1,18 +1,15 @@
-package aca.project.ftc.model.response;
+package aca.project.ftc.model.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserProductResponseDto {
-
+public class UserProductRequest {
     private Long id;
     private Long userId;
     private Long productId;
+    private String description;
     private Double amount;
     private Double quantity;
-    private String description;
-    private Boolean isActive;
-
 }

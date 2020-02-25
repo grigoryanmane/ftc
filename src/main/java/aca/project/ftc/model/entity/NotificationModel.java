@@ -1,4 +1,4 @@
-package aca.project.ftc.model;
+package aca.project.ftc.model.entity;
 
 
 import aca.project.ftc.model.constants.NotificationStatus;

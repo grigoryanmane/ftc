@@ -1,4 +1,4 @@
-package aca.project.ftc.model.request;
+package aca.project.ftc.model.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

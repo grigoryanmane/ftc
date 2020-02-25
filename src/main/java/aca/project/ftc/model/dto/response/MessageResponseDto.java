@@ -1,4 +1,4 @@
-package aca.project.ftc.model.response;
+package aca.project.ftc.model.dto.response;
 
 public class MessageResponseDto {
     private String message;

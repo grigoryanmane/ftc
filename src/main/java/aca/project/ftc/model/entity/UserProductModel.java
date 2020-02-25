@@ -1,7 +1,6 @@
-package aca.project.ftc.model;
+package aca.project.ftc.model.entity;
 
 
-import aca.project.ftc.model.constants.NotificationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "user_product")

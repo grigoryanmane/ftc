@@ -1,6 +1,6 @@
 package aca.project.ftc.auth;
 
-import aca.project.ftc.model.UserModel;
+import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;

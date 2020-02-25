@@ -1,14 +1,18 @@
-package aca.project.ftc.model.response;
+package aca.project.ftc.model.dto.request;
 
+import aca.project.ftc.model.constants.Gender;
 import aca.project.ftc.model.constants.Region;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
+import java.util.Date;
+
+
 @Getter
 @Setter
-public class UserEditResponseDto {
+public class UserEditRequest {
+
+    private String password;
 
     private String firstName;
 
@@ -18,4 +22,7 @@ public class UserEditResponseDto {
 
     private Region region;
 
+    private Gender gender;
+
+    private Date birthDate;
 }
