@@ -12,7 +12,7 @@ public interface UserProductRepository extends CrudRepository<UserProductModel, 
 
     List<UserProductModel> findByProductId(Long id);
 
-    Optional<UserProductModel> findByAmountIsGreaterThanEqual(Double amount);
+    Optional<UserProductModel> findAllByIsActive(Boolean isActive);
 
     Optional<UserProductModel> findByAmountIsLessThanEqual(Double amount);
 

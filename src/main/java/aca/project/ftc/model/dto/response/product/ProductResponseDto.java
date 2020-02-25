@@ -1,11 +1,11 @@
-package aca.project.ftc.model.dto.response;
+package aca.project.ftc.model.dto.response.product;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserProductResponseDto {
+public class ProductResponseDto {
 
     private Long id;
     private Long userId;

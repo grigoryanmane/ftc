@@ -27,7 +27,6 @@ public class UserProductModel extends BaseModel {
     @JoinColumn(name = "product_id")
     private ProductModel product;
 
-
     @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "userProduct", orphanRemoval = true)
     private List<NotificationModel> userProductNotification = new ArrayList<>();

@@ -5,10 +5,10 @@ import aca.project.ftc.auth.JwtUserDetailsService;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.dto.request.user.SignupRequest;
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
+import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.model.dto.request.user.UserEditRequest;
 import aca.project.ftc.model.dto.response.user.AuthenticationResponseDto;
-import aca.project.ftc.model.dto.response.User;
 import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
@@ -42,25 +42,10 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private NotificationRepository notificationRepository;
-
-    @Autowired
-    private UserProductRepository userProductRepository;
+    private UserService userService;
 
     public AuthenticationResponseDto signup(SignupRequest signupRequest) {
-        UserModel user = new UserModel();
-        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        user.setLastName(signupRequest.getLastName());
-        user.setFirstName(signupRequest.getFirstName());
-        user.setPhoneNumber(signupRequest.getPhoneNumber());
-        user.setBirthDate((signupRequest.getBirthDate()));
-        user.setIsCompany(signupRequest.getIsCompany());
-        user.setRegion(signupRequest.getRegion());
-        user.setUsername(signupRequest.getUsername());
-        user.setCompanyName(signupRequest.getCompanyName());
-        user.setGender(signupRequest.getGender());
-        userRepository.save(user);
-
+        UserModel user = setUserData(signupRequest);
         try {
             authenticate(user.getUsername(), signupRequest.getPassword());
         } catch (Exception e) {
@@ -70,8 +55,8 @@ public class AuthenticationService {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtHelper.generateToken(userDetails);
-        User userData = getUserResponseData(user);
-        return new AuthenticationResponseDto(userData, token);
+        UserResponseDto userResponseDto = userService.getUserResponseData(user);
+        return new AuthenticationResponseDto(userResponseDto, token);
     }
 
     public AuthenticationResponseDto login(AuthenticationRequestDto authenticationRequestDto) {
@@ -85,11 +70,11 @@ public class AuthenticationService {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDto.getUsername());
         String token = jwtHelper.generateToken(userDetails);
         Optional<UserModel> userModel = userRepository.findByUsername(authenticationRequestDto.getUsername());
-        User userData = getUserResponseData(userModel.get());
-        return new AuthenticationResponseDto(userData, token);
+        UserResponseDto userResponseDto = userService.getUserResponseData(userModel.get());
+        return new AuthenticationResponseDto(userResponseDto, token);
     }
 
-    private void authenticate(String username, String password) throws Exception {
+    public void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
@@ -99,81 +84,26 @@ public class AuthenticationService {
         }
     }
 
-    public UserModel editUser(UserEditRequest userEditRequest, Long id) {
-        //TODO::CHANGE THE LOGIC IN HERE
-        Optional<UserModel> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            try {
-                authenticate(user.get().getUsername(), userEditRequest.getPassword());
-            } catch (Exception e) {
-                throw new UserNotFound("INVALID_CREDENTIALS");
-            }
-            return checkUserData(userEditRequest, user.get());
-        } else {
-            throw new UserNotFound("USER_NOT_FOUND");
-        }
 
-    }
-
-    public String deleteUser(AuthenticationRequestDto authenticationRequestDto, Long id) {
-        Optional<UserModel> user = userRepository.findById(id);
-        if (user.isPresent() && user.get().getUsername().equals(authenticationRequestDto.getUsername())) {
-            try {
-                authenticate(user.get().getUsername(), authenticationRequestDto.getPassword());
-            } catch (Exception e) {
-                throw new UserNotFound("INVALID_CREDENTIALS");
-            }
-            notificationRepository.deleteAllByReceiverId(id);
-            notificationRepository.deleteAllBySenderId(id);
-            userProductRepository.deleteAllByUserId(id);
-            userRepository.deleteById(id);
-
-        } else {
-            throw new UserNotFound("User Not Found");
+    public UserModel setUserData(SignupRequest signupRequest) {
+        try {
+            UserModel userModel = new UserModel();
+            userModel.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            userModel.setLastName(signupRequest.getLastName());
+            userModel.setFirstName(signupRequest.getFirstName());
+            userModel.setPhoneNumber(signupRequest.getPhoneNumber());
+            userModel.setBirthDate((signupRequest.getBirthDate()));
+            userModel.setIsCompany(signupRequest.getIsCompany());
+            userModel.setRegion(signupRequest.getRegion());
+            userModel.setUsername(signupRequest.getUsername());
+            userModel.setCompanyName(signupRequest.getCompanyName());
+            userModel.setGender(signupRequest.getGender());
+            userRepository.save(userModel);
+            return userModel;
+        } catch (Exception e) {
+            //TODO:: CHANGE THE EXCEPTION
+            throw new UserNotFound("INVALID_REQUEST");
         }
-        //TODO::SHOULD I CHANGE THIS? Do not forget to remove token from front end and logout the user
-        return "User Successfully Deleted";
-
-    }
-
-    public User getUserResponseData(UserModel userModel) {
-        User user = new User();
-        user.setId(userModel.getId());
-        user.setUsername(userModel.getUsername());
-        user.setFirstName(userModel.getFirstName());
-        user.setLastName(userModel.getLastName());
-        user.setBirthDate(userModel.getBirthDate());
-        user.setPhoneNumber(userModel.getPhoneNumber());
-        user.setIsCompany(userModel.getIsCompany());
-        user.setCompanyName(userModel.getCompanyName());
-        user.setRating(userModel.getRating());
-        user.setRatingCount(userModel.getRatingCount());
-        user.setGender(userModel.getGender().getKey());
-        user.setRegion(userModel.getRegion().getKey());
-        return user;
-    }
-
-    public UserModel checkUserData(UserEditRequest userEditRequest, UserModel userModel) {
-        if (!userEditRequest.getFirstName().isEmpty()) {
-            userModel.setFirstName(userEditRequest.getFirstName());
-        }
-        if (!userEditRequest.getLastName().isEmpty()) {
-            userModel.setLastName(userEditRequest.getLastName());
-        }
-        if (!userEditRequest.getPhoneNumber().isEmpty()) {
-            userModel.setPhoneNumber(userEditRequest.getPhoneNumber());
-        }
-        if (!(userEditRequest.getRegion() == null)) {
-            userModel.setRegion(userEditRequest.getRegion());
-        }
-        if (!(userEditRequest.getGender() == null)) {
-            userModel.setGender(userEditRequest.getGender());
-        }
-        if (!(userEditRequest.getBirthDate() == null)) {
-            userModel.setBirthDate(userEditRequest.getBirthDate());
-        }
-        userRepository.save(userModel);
-        return userModel;
 
     }
 
