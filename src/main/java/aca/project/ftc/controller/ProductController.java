@@ -13,8 +13,8 @@ import java.util.List;
 
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/api/v1/product")
+@CrossOrigin(value = "*", origins = "*", allowedHeaders = "*")
 public class ProductController {
 
     @Autowired

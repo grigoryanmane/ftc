@@ -1,9 +1,6 @@
 package aca.project.ftc;
-
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import aca.project.ftc.exception.UserNotFound;
 

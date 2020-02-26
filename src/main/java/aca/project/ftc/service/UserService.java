@@ -57,9 +57,6 @@ public class UserService {
                 throw new UserNotFound("INVALID_CREDENTIALS");
             }
             userResponseDto = getUserResponseData(user.get());
-            notificationRepository.deleteAllByReceiverId(id);
-            notificationRepository.deleteAllBySenderId(id);
-            userProductRepository.deleteAllByUserId(id);
             userRepository.deleteById(id);
             return userResponseDto;
         } else {
