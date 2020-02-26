@@ -1,5 +1,6 @@
 package aca.project.ftc.controller;
 
+import aca.project.ftc.model.dto.request.product.ProductAddDto;
 import aca.project.ftc.model.dto.request.product.ProductFilterRequestDto;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
@@ -24,8 +25,8 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping(value = "/add")
-    public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto productRequestDto) {
-        ProductResponseDto productResponseDto = productService.addProduct(productRequestDto);
+    public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductAddDto productAddDto) {
+        ProductResponseDto productResponseDto = productService.addProduct(productAddDto);
         return ResponseEntity.ok(productResponseDto);
     }
 

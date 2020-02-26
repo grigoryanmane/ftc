@@ -2,6 +2,7 @@ package aca.project.ftc.service;
 
 
 import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.model.dto.request.product.ProductAddDto;
 import aca.project.ftc.model.dto.request.product.ProductFilterRequestDto;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
@@ -96,11 +97,17 @@ public class ProductService {
     }
 
     //TODO::MAKE NECESSARY CHECKS AND THROW EXCEPTION
-    public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
+    public ProductResponseDto addProduct(ProductAddDto productAddDto) {
         UserProductModel userProductModel = new UserProductModel();
-        userProductModel.setAmount(productRequestDto.getAmount());
-        userProductModel.setQuantity(productRequestDto.getQuantity());
-        userProductModel.setDescription(productRequestDto.getDescription());
+        if (!(userRepository.existsById(productAddDto.getUserId())) && !(productRepository.existsById(productAddDto.getProductId()))) {
+            //TODO:: CHANGE THE EXCEPTION
+            throw new UserNotFound("INVALID USER ID OR PRODUCT ID");
+        }
+        userProductModel.setProduct(productRepository.findById(productAddDto.getProductId()).get());
+        userProductModel.setUser(userRepository.findById(productAddDto.getUserId()).get());
+        userProductModel.setAmount(productAddDto.getAmount());
+        userProductModel.setQuantity(productAddDto.getQuantity());
+        userProductModel.setDescription(productAddDto.getDescription());
         userProductRepository.save(userProductModel);
         return setUserProductDto(userProductModel);
     }
