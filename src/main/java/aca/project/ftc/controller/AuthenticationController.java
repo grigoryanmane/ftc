@@ -10,7 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(allowedHeaders = "/*", methods = {RequestMethod.OPTIONS})
+@CrossOrigin()
 @RequestMapping(value = "api/v1")
 public class AuthenticationController {
 
