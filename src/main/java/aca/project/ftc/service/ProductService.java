@@ -77,9 +77,7 @@ public class ProductService {
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
             ProductResponseDto productResponseDto = setUserProductDto(userProductModel);
-            UserModel userModel = userProductModel.getUser();
-            userModel.removeUserProduct(userProductModel);
-
+            userProductRepository.deleteById(userProductModel.getId());
             return productResponseDto;
         }
         throw new UserNotFound("PRODUCT_NOT_FOUND");
@@ -97,10 +95,9 @@ public class ProductService {
         return productResponseDto;
     }
 
+    //TODO::MAKE NECESSARY CHECKS AND THROW EXCEPTION
     public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
         UserProductModel userProductModel = new UserProductModel();
-        //TODO:: SHOULD I DO CHECKS FOR isPresent()??
-        userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
         userProductModel.setAmount(productRequestDto.getAmount());
         userProductModel.setQuantity(productRequestDto.getQuantity());
         userProductModel.setDescription(productRequestDto.getDescription());

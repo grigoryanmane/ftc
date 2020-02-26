@@ -36,10 +36,10 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    @GetMapping(value = "/{id}/{offset}")
-    public ResponseEntity<List<ProductResponseDto>> userProduct(@PathVariable Long id, Integer offset) {
-        List<ProductResponseDto> userProductModel = productService.userProduct(id, offset);
-        return ResponseEntity.ok(userProductModel);
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<ProductResponseDto> deleteProduct(@PathVariable Long id) {
+        ProductResponseDto productResponseDto = productService.deleteProduct(id);
+        return ResponseEntity.ok(productResponseDto);
     }
 
 //    @PostMapping(value = "/filter")
