@@ -15,10 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import aca.project.ftc.auth.JwtRequestFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-
 public class Security extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -39,8 +40,9 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/login").permitAll()
                 .antMatchers("/api/v1/signup").permitAll()
-                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                .antMatchers( "/api/v1/**").authenticated()
+                .antMatchers("/test").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/*").permitAll()
+                .antMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
@@ -48,6 +50,19 @@ public class Security extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/*")
+                        .allowedOrigins("*");
+
+            }
+        };
     }
 
     @Bean

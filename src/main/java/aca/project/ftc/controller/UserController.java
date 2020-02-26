@@ -1,6 +1,4 @@
 package aca.project.ftc.controller;
-
-
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
 import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.UserModel;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin()
+@CrossOrigin(value = "*", origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/api/v1/user")
 public class UserController {
 
@@ -22,6 +20,8 @@ public class UserController {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<UserResponseDto> deleteUser(@RequestBody AuthenticationRequestDto authenticationRequestDto, @PathVariable Long id) {
