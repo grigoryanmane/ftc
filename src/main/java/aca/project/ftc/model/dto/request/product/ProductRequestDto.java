@@ -8,7 +8,6 @@ import lombok.Setter;
 public class ProductRequestDto {
 
     private Long id;
-    private Long productId;
     private String description;
     private Double amount;
     private Double quantity;

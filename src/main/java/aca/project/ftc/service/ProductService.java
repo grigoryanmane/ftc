@@ -38,9 +38,6 @@ public class ProductService {
             if (userProductRepository.existsById(productRequestDto.getId())) {
                 userProductModel.setId(productRequestDto.getId());
             }
-            if (productRepository.existsById(productRequestDto.getProductId())) {
-                userProductModel.setProduct((productRepository.findById(productRequestDto.getProductId())).get());
-            }
             if (productRequestDto.getAmount() != null) {
                 userProductModel.setAmount(productRequestDto.getAmount());
             }
