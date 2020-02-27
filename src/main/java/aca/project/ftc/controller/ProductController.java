@@ -7,6 +7,7 @@ import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.service.ProductService;
 import aca.project.ftc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,16 +25,28 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping(value = "/add")
-    public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductAddDto productAddDto) {
-        ProductResponseDto productResponseDto = productService.addProduct(productAddDto);
+    @PostMapping()
+    public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto productRequestDto) {
+        ProductResponseDto productResponseDto = productService.addProduct(productRequestDto);
         return ResponseEntity.ok(productResponseDto);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<List<ProductResponseDto>> getUserProductList(@PathVariable Long id) {
+        List<ProductResponseDto> userProductList = productService.getUserProductList(id);
+        return ResponseEntity.ok(userProductList);
+    }
+
+    @GetMapping(value = "")
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
+        List<ProductResponseDto> userProductList = productService.getAllProducts();
+        return ResponseEntity.ok(userProductList);
     }
 
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ProductResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
-        ProductResponseDto productResponseDto = productService.editProduct(productRequestDto);
+        ProductResponseDto productResponseDto = productService.editProduct(productRequestDto, id);
         return ResponseEntity.ok(productResponseDto);
     }
 

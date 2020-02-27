@@ -10,6 +10,9 @@ public interface UserProductRepository extends CrudRepository<UserProductModel, 
 
     List<UserProductModel> findByUserId(Long id);
 
+    @Override
+    boolean existsById(Long aLong);
+
     List<UserProductModel> findByProductId(Long id);
 
     Optional<UserProductModel> findAllByIsActive(Boolean isActive);

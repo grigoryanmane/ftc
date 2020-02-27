@@ -12,7 +12,6 @@ public enum Region {
     LORI("Lori"),
     KOTAYQ("Kotayq"),
     SHIRAK("Shirak"),
-    //TODO:: ASK DIANA TO CHANGE THIS TO SYUNIQ FROM FRONTEND
     SYUNIQ("Syuniq"),
     VAYOTSDZOR("Vayots Dzor"),
     TAVUSH("Tavush"),

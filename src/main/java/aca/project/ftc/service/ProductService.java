@@ -33,12 +33,10 @@ public class ProductService {
     private UserRepository userRepository;
 
 
-    public ProductResponseDto editProduct(ProductRequestDto productRequestDto) {
-        UserProductModel userProductModel = new UserProductModel();
-        try {
-            if (userProductRepository.existsById(productRequestDto.getId())) {
-                userProductModel.setId(productRequestDto.getId());
-            }
+    public ProductResponseDto editProduct(ProductRequestDto productRequestDto, Long id) {
+
+        if (userProductRepository.existsById(id)) {
+            UserProductModel userProductModel = userProductRepository.findById(id).get();
             if (productRequestDto.getAmount() != null) {
                 userProductModel.setAmount(productRequestDto.getAmount());
             }
@@ -50,27 +48,37 @@ public class ProductService {
             }
             userProductRepository.save(userProductModel);
             return setUserProductDto(userProductModel);
-        } catch (Exception e) {
-            throw new UserNotFound("INVALID_REQUEST_BODY");
         }
+        //TODO:: CHANGE THE EXCEPTION
+        throw new UserNotFound("USER_NOT_FOUND");
     }
 
-    public List<ProductResponseDto> userProduct(Long id, Integer offset) {
+    public List<ProductResponseDto> getUserProductList(Long id) {
         List<UserProductModel> userProductModel = userProductRepository.findByUserId(id);
         if (!userProductModel.isEmpty()) {
-            List<ProductResponseDto> productResponseDtoList = new ArrayList<>();
-
-            //TODO:: SHOULD I ITERATE OVER USING WHILE OR NOT ?
-            int i = 0;
-            while (i < userProductModel.size()) {
-                ProductResponseDto productResponseDto = setUserProductDto(userProductModel.get(i));
-                productResponseDtoList.add(productResponseDto);
-                i++;
-            }
-            return productResponseDtoList;
+            return getTheList(userProductModel);
         } else {
             return Collections.emptyList();
         }
+    }
+
+    public List<ProductResponseDto> getAllProducts() {
+        List<UserProductModel> userProductModel = (List<UserProductModel>) userProductRepository.findAll();
+        if (!userProductModel.isEmpty()) {
+            return getTheList(userProductModel);
+        }
+        return Collections.emptyList();
+    }
+
+    public List<ProductResponseDto> getTheList(List<UserProductModel> userProductModel) {
+        List<ProductResponseDto> productResponseDtoList = new ArrayList<>();
+        int i = 0;
+        while (i < userProductModel.size()) {
+            ProductResponseDto productResponseDto = setUserProductDto(userProductModel.get(i));
+            productResponseDtoList.add(productResponseDto);
+            i++;
+        }
+        return productResponseDtoList;
     }
 
     public ProductResponseDto deleteProduct(Long id) {
@@ -78,7 +86,7 @@ public class ProductService {
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
             ProductResponseDto productResponseDto = setUserProductDto(userProductModel);
-            userProductRepository.deleteById(userProductModel.getId());
+            userProductRepository.deleteById(id);
             return productResponseDto;
         }
         throw new UserNotFound("PRODUCT_NOT_FOUND");
@@ -97,20 +105,21 @@ public class ProductService {
     }
 
     //TODO::MAKE NECESSARY CHECKS AND THROW EXCEPTION
-    public ProductResponseDto addProduct(ProductAddDto productAddDto) {
+    public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
         UserProductModel userProductModel = new UserProductModel();
-        if (!(userRepository.existsById(productAddDto.getUserId())) && !(productRepository.existsById(productAddDto.getProductId()))) {
+        if (!(userRepository.existsById(productRequestDto.getUserId())) && !(productRepository.existsById(productRequestDto.getProductId()))) {
             //TODO:: CHANGE THE EXCEPTION
             throw new UserNotFound("INVALID USER ID OR PRODUCT ID");
         }
-        userProductModel.setProduct(productRepository.findById(productAddDto.getProductId()).get());
-        userProductModel.setUser(userRepository.findById(productAddDto.getUserId()).get());
-        userProductModel.setAmount(productAddDto.getAmount());
-        userProductModel.setQuantity(productAddDto.getQuantity());
-        userProductModel.setDescription(productAddDto.getDescription());
+        userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
+        userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
+        userProductModel.setAmount(productRequestDto.getAmount());
+        userProductModel.setQuantity(productRequestDto.getQuantity());
+        userProductModel.setDescription(productRequestDto.getDescription());
         userProductRepository.save(userProductModel);
         return setUserProductDto(userProductModel);
     }
+
 
     //TODO:: ASK NANE ABOUT FILTERING
 //    public List<ProductResponseDto> filter(ProductFilterRequestDto productFilterRequestDto) {

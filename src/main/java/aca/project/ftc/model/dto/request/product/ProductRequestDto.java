@@ -7,9 +7,10 @@ import lombok.Setter;
 @Setter
 public class ProductRequestDto {
 
-    //TODO:: REMOVE ID AND SEND IT VIA PATH FOR ADD PRODUCT, MAKE THIS THE ONLY REQUEST TYPE OTHER THAN FILTER
-    private Long id;
+    private Long userId;
+    private Long productId;
     private String description;
     private Double amount;
     private Double quantity;
+
 }
