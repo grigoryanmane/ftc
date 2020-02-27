@@ -2,12 +2,8 @@ package aca.project.ftc.service;
 
 
 import aca.project.ftc.exception.UserNotFound;
-import aca.project.ftc.model.dto.request.product.ProductAddDto;
-import aca.project.ftc.model.dto.request.product.ProductFilterRequestDto;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
-import aca.project.ftc.model.dto.response.user.UserResponseDto;
-import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.model.entity.UserProductModel;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
@@ -18,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
