@@ -5,12 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductRequestDto {
+public class ProductAddDto {
 
-    private Long userId;
     private Long productId;
+    private Long userId;
     private String description;
     private Double amount;
     private Double quantity;
-
 }
