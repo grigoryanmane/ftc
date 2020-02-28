@@ -43,8 +43,8 @@ public class ProductController {
 
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
-        ProductResponseDto productResponseDto = productService.editProduct(productRequestDto, id);
+    public ResponseEntity<List<ProductResponseDto>> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
+        List<ProductResponseDto> productResponseDto = productService.editProduct(productRequestDto, id);
         return ResponseEntity.ok(productResponseDto);
     }
 
