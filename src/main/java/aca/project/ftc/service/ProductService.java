@@ -28,7 +28,7 @@ public class ProductService {
     private UserRepository userRepository;
 
 
-    public ProductResponseDto editProduct(ProductRequestDto productRequestDto, Long id) {
+    public List<ProductResponseDto> editProduct(ProductRequestDto productRequestDto, Long id) {
 
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
@@ -42,7 +42,7 @@ public class ProductService {
                 userProductModel.setDescription(productRequestDto.getDescription());
             }
             userProductRepository.save(userProductModel);
-            return setUserProductDto(userProductModel);
+            return getUserProductList(userProductModel.getUser().getId());
         }
         //TODO:: CHANGE THE EXCEPTION
         throw new UserNotFound("USER_NOT_FOUND");
@@ -92,6 +92,7 @@ public class ProductService {
         productResponseDto.setId(userProductModel.getId());
         productResponseDto.setUserId(userProductModel.getUser().getId());
         productResponseDto.setProductId(userProductModel.getProduct().getId());
+        productResponseDto.setProductName(userProductModel.getProduct().getName());
         productResponseDto.setAmount(userProductModel.getAmount());
         productResponseDto.setQuantity(userProductModel.getQuantity());
         productResponseDto.setDescription(userProductModel.getDescription());
