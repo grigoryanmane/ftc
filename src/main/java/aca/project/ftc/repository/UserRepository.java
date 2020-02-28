@@ -1,6 +1,5 @@
 package aca.project.ftc.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.repository.CrudRepository;
 import aca.project.ftc.model.entity.UserModel;
 
@@ -11,12 +10,8 @@ public interface UserRepository extends CrudRepository<UserModel, Long> {
 
     Optional<UserModel> findByUsername(String username);
 
-//    Page<UserModel> finAllByUserId()
+    boolean existsByUsername(String username);
 
     Optional<UserModel> findAllProductById(Long id);
-
-
-//    List<User> findByNotification(Long id);
-//    List<Notification> findByIdOrderByNotification(Long id);
 
 }
