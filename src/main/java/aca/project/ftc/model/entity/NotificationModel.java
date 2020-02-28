@@ -29,8 +29,7 @@ public class NotificationModel extends BaseModel {
     private UserModel sender;
 
     @ManyToOne
-    @MapsId("id")
-    @JoinColumn(name = "user_product_id",  referencedColumnName = "id")
+    @JoinColumn(name = "user_product_id")
     private UserProductModel userProduct;
 
     @Size(max = 150)

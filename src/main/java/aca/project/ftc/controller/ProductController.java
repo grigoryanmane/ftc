@@ -1,22 +1,20 @@
 package aca.project.ftc.controller;
-
-import aca.project.ftc.model.dto.request.product.ProductAddDto;
-import aca.project.ftc.model.dto.request.product.ProductFilterRequestDto;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.service.ProductService;
 import aca.project.ftc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 
 
 @RestController
 @RequestMapping(value = "/api/v1/product")
 @CrossOrigin(value = "*", origins = "*", allowedHeaders = "*")
+@PermitAll
 public class ProductController {
 
     @Autowired
@@ -45,8 +43,8 @@ public class ProductController {
 
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
-        ProductResponseDto productResponseDto = productService.editProduct(productRequestDto, id);
+    public ResponseEntity<List<ProductResponseDto>> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
+        List<ProductResponseDto> productResponseDto = productService.editProduct(productRequestDto, id);
         return ResponseEntity.ok(productResponseDto);
     }
 

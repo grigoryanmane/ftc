@@ -3,14 +3,14 @@ package aca.project.ftc.service;
 
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
+import aca.project.ftc.model.dto.request.user.ResetRequestDto;
 import aca.project.ftc.model.dto.request.user.UserEditRequest;
+import aca.project.ftc.model.dto.request.user.UsernameCheckDto;
 import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.UserModel;
-import aca.project.ftc.repository.NotificationRepository;
-import aca.project.ftc.repository.ProductRepository;
-import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -22,14 +22,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserProductRepository userProductRepository;
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @Autowired
-    private NotificationRepository notificationRepository;
+    private PasswordEncoder passwordEncoder;
 
     public UserModel editUser(UserEditRequest userEditRequest, Long id) {
         //TODO::CHANGE THE LOGIC IN HERE
@@ -41,10 +39,29 @@ public class UserService {
                 throw new UserNotFound("INVALID_CREDENTIALS");
             }
             return checkUserData(userEditRequest, user.get());
-        } else {
-            throw new UserNotFound("USER_NOT_FOUND");
         }
+        throw new UserNotFound("USER_NOT_FOUND");
 
+
+    }
+
+    public UserResponseDto resetPassword(ResetRequestDto resetRequestDto, Long id) {
+        if (userRepository.existsById(id)) {
+            try {
+                authenticationService.authenticate(resetRequestDto.getUsername(), resetRequestDto.getPassword());
+            } catch (Exception e) {
+                throw new UserNotFound("INVALID_CREDENTIALS");
+            }
+            UserModel userModel = userRepository.findById(id).get();
+            userModel.setPassword(passwordEncoder.encode(resetRequestDto.getNewPassword()));
+            userRepository.save(userModel);
+            return getUserResponseData(userModel);
+        }
+        throw new UserNotFound("INVALID_CREDENTIALS");
+    }
+
+    public Boolean checkUsername(UsernameCheckDto usernameCheckDto) {
+        return userRepository.existsByUsername(usernameCheckDto.getUsername());
     }
 
     public UserResponseDto deleteUser(AuthenticationRequestDto authenticationRequestDto, Long id) {
