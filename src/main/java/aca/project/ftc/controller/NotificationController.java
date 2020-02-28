@@ -1,5 +1,6 @@
 package aca.project.ftc.controller;
 
+import aca.project.ftc.model.dto.request.notification.NotificationEditRequestDto;
 import aca.project.ftc.model.dto.request.notification.NotificationRequestDto;
 import aca.project.ftc.model.dto.response.notification.NotificationResponseDto;
 import aca.project.ftc.repository.NotificationRepository;
@@ -25,4 +26,9 @@ public class NotificationController {
         return ResponseEntity.ok(notificationResponseDto);
     }
 
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<NotificationResponseDto> editNotification(@RequestBody NotificationEditRequestDto notificationEditRequestDto, @PathVariable Long id) {
+        NotificationResponseDto notificationResponseDto = notificationService.editNotification(notificationEditRequestDto, id);
+        return ResponseEntity.ok(notificationResponseDto);
+    }
 }
