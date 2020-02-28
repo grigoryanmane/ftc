@@ -13,8 +13,10 @@ import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -59,6 +61,35 @@ public class NotificationService {
         }
     }
 
+    public NotificationResponseDto getNotification(Long id) {
+        if (notificationRepository.existsById(id)) {
+            return getNotificationResponseDto(notificationRepository.findById(id).get());
+        }
+        //TODO::GIVE NORMAL EXCEPTION
+        throw new UserNotFound("NOTIFICATION NOT FOUND");
+    }
+
+    public List<NotificationResponseDto> farmerNotification(Long id) {
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndStatusIsOrStatusIsOrderByUpdatedAtDesc(id, NotificationStatus.ACCEPTED, NotificationStatus.REJECTED);
+        return getResponseList(notificationResponseDto);
+    }
+
+    public List<NotificationResponseDto> companyNotification(Long id) {
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllByReceiverIdAndStatusIsOrderByUpdatedAtDesc(id, NotificationStatus.PENDING);
+        return getResponseList(notificationResponseDto);
+    }
+
+    public List<NotificationResponseDto> getResponseList(List<NotificationModel> notificationModel) {
+        List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
+        int i = 0;
+        while (i < notificationModel.size()) {
+            NotificationResponseDto notificationResponseDto = getNotificationResponseDto(notificationModel.get(i));
+            notificationResponseDtoList.add(notificationResponseDto);
+            i++;
+        }
+        return notificationResponseDtoList;
+    }
+
     public NotificationResponseDto editNotification(NotificationEditRequestDto notificationEditRequestDto, Long id) {
         try {
             if (notificationRepository.existsById(id)) {
@@ -72,8 +103,16 @@ public class NotificationService {
         } catch (Exception e) {
             throw new UserNotFound("SOME EXCEPTION");
         }
+    }
 
-
+    public NotificationResponseDto deleteNotification(Long id) {
+        if (notificationRepository.existsById(id)) {
+            NotificationModel notificationModel = notificationRepository.findById(id).get();
+            notificationRepository.deleteById(id);
+            return getNotificationResponseDto(notificationModel);
+        }
+        //TODO:: REMOVE AND CHANGE THE EXCEPTION
+        throw new UserNotFound("Invalid Notification");
     }
 
     public NotificationResponseDto getNotificationResponseDto(NotificationModel notificationModel) {
