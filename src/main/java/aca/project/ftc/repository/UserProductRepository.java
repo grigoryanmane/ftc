@@ -12,7 +12,6 @@ public interface UserProductRepository extends PagingAndSortingRepository<UserPr
 
     List<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id);
     List<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive);
-
     @Override
     boolean existsById(Long aLong);
 
