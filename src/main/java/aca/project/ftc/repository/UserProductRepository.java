@@ -1,15 +1,17 @@
 package aca.project.ftc.repository;
 
 import aca.project.ftc.model.entity.UserProductModel;
-import org.springframework.data.repository.CrudRepository;
+import org.hibernate.annotations.OrderBy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserProductRepository extends CrudRepository<UserProductModel, Long> {
+public interface UserProductRepository extends PagingAndSortingRepository<UserProductModel, Long> {
 
-    List<UserProductModel> findByUserId(Long id);
-
+    List<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id);
+    List<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive);
     @Override
     boolean existsById(Long aLong);
 

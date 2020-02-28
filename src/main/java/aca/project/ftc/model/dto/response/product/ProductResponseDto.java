@@ -11,6 +11,7 @@ public class ProductResponseDto {
     private Long userId;
     private Long productId;
     private String productName;
+    private String companyName;
     private Double amount;
     private Double quantity;
     private String description;

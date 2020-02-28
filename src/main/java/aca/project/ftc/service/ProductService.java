@@ -38,7 +38,7 @@ public class ProductService {
             if (productRequestDto.getQuantity() != null) {
                 userProductModel.setQuantity(productRequestDto.getQuantity());
             }
-            if (productRequestDto.getDescription() != null) {
+            if (!productRequestDto.getDescription().equals("")) {
                 userProductModel.setDescription(productRequestDto.getDescription());
             }
             userProductRepository.save(userProductModel);
@@ -49,7 +49,7 @@ public class ProductService {
     }
 
     public List<ProductResponseDto> getUserProductList(Long id) {
-        List<UserProductModel> userProductModel = userProductRepository.findByUserId(id);
+        List<UserProductModel> userProductModel = userProductRepository.findByUserIdOrderByUpdatedAtDesc(id);
         if (!userProductModel.isEmpty()) {
             return getTheList(userProductModel);
         } else {
@@ -58,7 +58,7 @@ public class ProductService {
     }
 
     public List<ProductResponseDto> getAllProducts() {
-        List<UserProductModel> userProductModel = (List<UserProductModel>) userProductRepository.findAll();
+        List<UserProductModel> userProductModel = userProductRepository.findAllByIsActiveOrderByUpdatedAtDesc(true);
         if (!userProductModel.isEmpty()) {
             return getTheList(userProductModel);
         }
@@ -93,6 +93,7 @@ public class ProductService {
         productResponseDto.setUserId(userProductModel.getUser().getId());
         productResponseDto.setProductId(userProductModel.getProduct().getId());
         productResponseDto.setProductName(userProductModel.getProduct().getName());
+        productResponseDto.setCompanyName(userProductModel.getUser().getCompanyName());
         productResponseDto.setAmount(userProductModel.getAmount());
         productResponseDto.setQuantity(userProductModel.getQuantity());
         productResponseDto.setDescription(userProductModel.getDescription());
