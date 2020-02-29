@@ -50,6 +50,7 @@ public class JwtHelper {
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))

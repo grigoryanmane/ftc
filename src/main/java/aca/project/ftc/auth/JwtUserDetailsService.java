@@ -16,7 +16,7 @@ import java.util.Optional;
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository; //TODO::SHOULD I MAKE THIS PRIVATE
+    private UserRepository userRepository; //TODO::SHOULD I MAKE THIS PRIVATE
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -1,4 +1,8 @@
 package aca.project.ftc.exception;
 
-public class CustomException {
+public class CustomException extends RuntimeException {
+    public CustomException(String message) {
+        super(message);
+    }
+
 }

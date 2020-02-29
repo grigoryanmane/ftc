@@ -1,6 +1,7 @@
 package aca.project.ftc.service;
 
 
+import aca.project.ftc.exception.CustomException;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
 import aca.project.ftc.model.dto.request.user.ResetRequestDto;
@@ -10,6 +11,7 @@ import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -94,6 +96,16 @@ public class UserService {
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
+
+    public UserResponseDto getUserData(UserDetails userDetails) {
+        Optional<UserModel> userModel = userRepository.findByUsername(userDetails.getUsername());
+        throw new CustomException("USER_NOT_FOUND");
+
+//        if (userModel.isPresent()) {
+//            return getUserResponseData(userModel.get());
+//        }
+//        throw new CustomException("USER_NOT_FOUND");
+    }
 
     public UserModel checkUserData(UserEditRequest userEditRequest, UserModel userModel) {
         if (!userEditRequest.getFirstName().isEmpty()) {
