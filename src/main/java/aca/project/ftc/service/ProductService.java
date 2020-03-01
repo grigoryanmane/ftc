@@ -1,6 +1,9 @@
 package aca.project.ftc.service;
 
 
+import aca.project.ftc.exception.CustomException;
+import aca.project.ftc.exception.InvalidRequest;
+import aca.project.ftc.exception.ProductNotFoundException;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductListResponseDto;
@@ -15,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.swing.event.InternalFrameEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +51,6 @@ public class ProductService {
             userProductRepository.save(userProductModel);
             return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
         }
-        //TODO:: CHANGE THE EXCEPTION
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
@@ -81,7 +82,6 @@ public class ProductService {
         if (size == null) {
             size = 10;
         }
-
         ProductListResponseDto productListResponseDto = new ProductListResponseDto();
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProductModel> userProductModel = filterAllProducts(productId, true, pageable);
@@ -115,8 +115,26 @@ public class ProductService {
             userProductRepository.deleteById(id);
             return productResponseDto;
         }
-        throw new UserNotFound("PRODUCT_NOT_FOUND");
+        throw new ProductNotFoundException("PRODUCT_NOT_FOUND");
     }
+
+    public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
+        try{
+            validAddRequest(productRequestDto);
+            UserProductModel userProductModel = new UserProductModel();
+            userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
+            userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
+            userProductModel.setAmount(productRequestDto.getAmount());
+            userProductModel.setQuantity(productRequestDto.getQuantity());
+            userProductModel.setDescription(productRequestDto.getDescription());
+            userProductRepository.save(userProductModel);
+            return setUserProductDto(userProductModel);
+        }catch (Exception e){
+            throw  new CustomException("UNEXPECTED_EXCEPTION: " .concat( e.getMessage()), e.getCause());
+        }
+
+    }
+
 
     public ProductResponseDto setUserProductDto(UserProductModel userProductModel) {
         ProductResponseDto productResponseDto = new ProductResponseDto();
@@ -132,21 +150,6 @@ public class ProductService {
         return productResponseDto;
     }
 
-    //TODO::MAKE NECESSARY CHECKS AND THROW EXCEPTION
-    public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
-        UserProductModel userProductModel = new UserProductModel();
-        if (!(userRepository.existsById(productRequestDto.getUserId())) && !(productRepository.existsById(productRequestDto.getProductId()))) {
-            //TODO:: CHANGE THE EXCEPTION
-            throw new UserNotFound("INVALID USER ID OR PRODUCT ID");
-        }
-        userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
-        userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
-        userProductModel.setAmount(productRequestDto.getAmount());
-        userProductModel.setQuantity(productRequestDto.getQuantity());
-        userProductModel.setDescription(productRequestDto.getDescription());
-        userProductRepository.save(userProductModel);
-        return setUserProductDto(userProductModel);
-    }
 
     public Page<UserProductModel> filterUserProducts(Long userId, Long productId, Boolean isActive, Pageable pageable) {
         if (productId != null && isActive != null) {
@@ -171,11 +174,28 @@ public class ProductService {
     }
 
 
-    //TODO:: ASK NANE ABOUT FILTERING
-//    public List<ProductResponseDto> filter(ProductFilterRequestDto productFilterRequestDto) {
-//        UserProductModel userProductModel;
-//        if (productFilterRequestDto.getIsActive() != null) {
-//            Optional<UserProductModel> activeFilter = userProductRepository.findAllByIsActive(productFilterRequestDto.getIsActive());
-//        }
-//    }
+    public void validAddRequest(ProductRequestDto productRequestDto) {
+        if (productRequestDto.getUserId() == null) {
+            throw new InvalidRequest("USER_ID_CANNOT_BE_NULL");
+        }
+        if (productRequestDto.getProductId() == null) {
+            throw new InvalidRequest("PRODUCT_ID_CANNOT_BE_NULL");
+        }
+        if (productRequestDto.getAmount() == null) {
+            throw new InvalidRequest("AMOUNT_CANNOT_BE_NULL");
+        }
+        if (productRequestDto.getQuantity() == null) {
+            throw new InvalidRequest("QUANTITY_CANNOT_BE_NULL");
+        }
+        if (productRequestDto.getDescription().equals("")) {
+            throw new InvalidRequest("DESCRIPTION_CANNOT_BE_NULL");
+        }
+        if (!(productRepository.existsById(productRequestDto.getProductId()))) {
+            throw new ProductNotFoundException("INVALID_PRODUCT_ID_PRODUCT_NOT_FOUND");
+        }
+        if (!(userRepository.existsById(productRequestDto.getUserId()))) {
+            throw new UserNotFound("INVALID_USER_ID_USER_NOT_FOUND");
+        }
+    }
+
 }

@@ -17,12 +17,11 @@ import java.util.Optional;
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository; //TODO::SHOULD I MAKE THIS PRIVATE
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UserNotFound {
         Optional<UserModel> user = userRepository.findByUsername(username);
-        //TODO:: Check whether this is the correct way of loading user and its details for authentication
         if (user.isPresent()) {
             return new User(user.get().getUsername(),user.get().getPassword(),
                     new ArrayList<>());

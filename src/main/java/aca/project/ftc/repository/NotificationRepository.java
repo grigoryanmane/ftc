@@ -13,7 +13,8 @@ public interface NotificationRepository extends CrudRepository<NotificationModel
     Optional<NotificationModel> findById(Long aLong);
 
     @Override
-    boolean existsById(Long aLong);
+    boolean existsById(Long id);
+    Optional<NotificationModel> findAllByUserProductIdAndStatus(Long id, NotificationStatus accepted);
 
     List<NotificationModel> findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(Long id, Boolean isActive, NotificationStatus notificationStatusAccepted, NotificationStatus notificationStatusRejected);
 

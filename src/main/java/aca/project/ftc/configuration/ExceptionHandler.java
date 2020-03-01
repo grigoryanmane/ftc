@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 
@@ -33,6 +34,7 @@ public class ExceptionHandler {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(NotFoundException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
@@ -63,10 +65,17 @@ public class ExceptionHandler {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(NotificationNotFound.class)
     public ResponseEntity<ErrorResponse> handleException(NotificationNotFound ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleException(BadCredentialsException ex) {
+        log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
+        return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(RuntimeException.class)
@@ -75,7 +84,6 @@ public class ExceptionHandler {
         return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    //TODO:: WHY DO WE NEED THIS? CAN't WE JUST IGNORE IT AND CALL THE OTHER METHOD ?
     private ResponseEntity<ErrorResponse> handleErrorResponse(String errorCode, String errorMessage, HttpStatus httpStatus) {
         return this.handleErrorResponse(errorCode, errorMessage, httpStatus, null);
     }

@@ -31,10 +31,5 @@ public class AuthenticationController {
         return ResponseEntity.ok(result);
     }
 
-    //TODO:: WHERE THIS NEEDS TO BE IN ORDER TO WORK PROPERLY, WHEN NO TOKEN IS AVAILABLE OR TOKEN IS EXPIRED
-    @ExceptionHandler(BadCredentialsException.class)
-    public String authError() {
-        return "unauthorized";
-    }
 
 }
