@@ -1,5 +1,7 @@
 package aca.project.ftc.controller;
+
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
+import aca.project.ftc.model.dto.response.product.ProductListResponseDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.service.ProductService;
 import aca.project.ftc.service.UserService;
@@ -29,23 +31,28 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<List<ProductResponseDto>> getUserProductList(@PathVariable Long id) {
-        List<ProductResponseDto> userProductList = productService.getUserProductList(id);
+    @GetMapping(value = "/{id}", params = {"page", "size"})
+    public ResponseEntity<ProductListResponseDto> getUserProductList(@PathVariable Long id,
+                                                                     @RequestParam("page") Integer page,
+                                                                     @RequestParam("size") Integer size) {
+        ProductListResponseDto userProductList = productService.getUserProductList(id, page, size);
         return ResponseEntity.ok(userProductList);
     }
 
-    @GetMapping(value = "")
-    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
-        List<ProductResponseDto> userProductList = productService.getAllProducts();
-        return ResponseEntity.ok(userProductList);
+    @GetMapping(value = "", params = {"page", "size"})
+    public ResponseEntity<ProductListResponseDto> getAllProducts(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+        ProductListResponseDto productListResponseDto = productService.getAllProducts(page, size);
+        return ResponseEntity.ok(productListResponseDto);
     }
 
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<List<ProductResponseDto>> editProduct(@RequestBody ProductRequestDto productRequestDto, @PathVariable Long id) {
-        List<ProductResponseDto> productResponseDto = productService.editProduct(productRequestDto, id);
-        return ResponseEntity.ok(productResponseDto);
+    @PutMapping(value = "/{id}", params = {"page", "size"})
+    public ResponseEntity<ProductListResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto,
+                                                              @PathVariable Long id,
+                                                              @RequestParam("page") Integer page,
+                                                              @RequestParam("size") Integer size) {
+        ProductListResponseDto productListResponseDto = productService.editProduct(productRequestDto, id, page, size);
+        return ResponseEntity.ok(productListResponseDto);
     }
 
     @DeleteMapping(value = "/{id}")

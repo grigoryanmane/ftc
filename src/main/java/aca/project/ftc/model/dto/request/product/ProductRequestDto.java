@@ -12,5 +12,6 @@ public class ProductRequestDto {
     private String description;
     private Double amount;
     private Double quantity;
+    private int pageNumber;
 
 }

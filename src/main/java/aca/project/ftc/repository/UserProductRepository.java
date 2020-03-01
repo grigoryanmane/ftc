@@ -1,19 +1,24 @@
 package aca.project.ftc.repository;
 
 import aca.project.ftc.model.entity.UserProductModel;
-import org.hibernate.annotations.OrderBy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserProductRepository extends PagingAndSortingRepository<UserProductModel, Long> {
+public interface UserProductRepository extends JpaRepository<UserProductModel, Long> {
 
-    List<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id);
-    List<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive);
+    Page<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id, Pageable pageable);
+
+    Page<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive, Pageable pageable);
+
+
     @Override
     boolean existsById(Long aLong);
+
 
     List<UserProductModel> findByProductId(Long id);
 

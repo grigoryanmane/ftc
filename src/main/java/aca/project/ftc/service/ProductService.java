@@ -3,14 +3,19 @@ package aca.project.ftc.service;
 
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
+import aca.project.ftc.model.dto.response.product.ProductListResponseDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.model.entity.UserProductModel;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.swing.event.InternalFrameEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +33,7 @@ public class ProductService {
     private UserRepository userRepository;
 
 
-    public List<ProductResponseDto> editProduct(ProductRequestDto productRequestDto, Long id) {
+    public ProductListResponseDto editProduct(ProductRequestDto productRequestDto, Long id, Integer page, Integer size) {
 
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
@@ -42,27 +47,52 @@ public class ProductService {
                 userProductModel.setDescription(productRequestDto.getDescription());
             }
             userProductRepository.save(userProductModel);
-            return getUserProductList(userProductModel.getUser().getId());
+            return getUserProductList(userProductModel.getUser().getId(), page, size);
         }
         //TODO:: CHANGE THE EXCEPTION
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
-    public List<ProductResponseDto> getUserProductList(Long id) {
-        List<UserProductModel> userProductModel = userProductRepository.findByUserIdOrderByUpdatedAtDesc(id);
-        if (!userProductModel.isEmpty()) {
-            return getTheList(userProductModel);
-        } else {
-            return Collections.emptyList();
+    public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size) {
+        if (page == null) {
+            page = 0;
         }
+        if (size == null) {
+            size = 10;
+        }
+        ProductListResponseDto productListResponseDto = new ProductListResponseDto();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProductModel> userProductModel = userProductRepository.findByUserIdOrderByUpdatedAtDesc(id, pageable);
+        List<UserProductModel> userProductModelList = userProductModel.toList();
+        if (!userProductModel.isEmpty()) {
+            productListResponseDto.setProductResponseDtoList(getTheList(userProductModelList));
+        } else {
+            productListResponseDto.setProductResponseDtoList(Collections.emptyList());
+        }
+        productListResponseDto.setPageCount(userProductModel.getTotalPages());
+        productListResponseDto.setTotalElements(userProductModel.getTotalElements());
+        return productListResponseDto;
     }
 
-    public List<ProductResponseDto> getAllProducts() {
-        List<UserProductModel> userProductModel = userProductRepository.findAllByIsActiveOrderByUpdatedAtDesc(true);
-        if (!userProductModel.isEmpty()) {
-            return getTheList(userProductModel);
+    public ProductListResponseDto getAllProducts(Integer page, Integer size) {
+        if (page == null) {
+            page = 0;
         }
-        return Collections.emptyList();
+        if (size == null) {
+            size = 10;
+        }
+        ProductListResponseDto productListResponseDto = new ProductListResponseDto();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProductModel> userProductModel = userProductRepository.findAllByIsActiveOrderByUpdatedAtDesc(true, pageable);
+        productListResponseDto.setTotalElements(userProductModel.getTotalElements());
+        productListResponseDto.setPageCount(userProductModel.getTotalPages());
+        List<UserProductModel> userProductModelList = userProductModel.toList();
+        if (!userProductModel.isEmpty()) {
+            productListResponseDto.setProductResponseDtoList(getTheList(userProductModelList));
+        } else {
+            productListResponseDto.setProductResponseDtoList(Collections.emptyList());
+        }
+        return productListResponseDto;
     }
 
     public List<ProductResponseDto> getTheList(List<UserProductModel> userProductModel) {
