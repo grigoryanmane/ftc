@@ -15,7 +15,6 @@ import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,10 +60,11 @@ public class NotificationService {
     }
 
     public NotificationResponseDto getNotification(Long id) {
-        if (notificationRepository.existsById(id)) {
-            return getNotificationResponseDto(notificationRepository.findById(id).get());
+        if (userProductRepository.existsById(id)) {
+            NotificationModel notificationModel = notificationRepository.findAllByUserProductIdAndStatus(id, NotificationStatus.ACCEPTED).get();
+            return getNotificationResponseDto(notificationModel);
         }
-        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
+        throw new NotificationNotFound("USER_PRODUCT__NOTIFICATION_NOT_FOUND");
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {

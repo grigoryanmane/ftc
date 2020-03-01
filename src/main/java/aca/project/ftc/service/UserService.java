@@ -1,7 +1,6 @@
 package aca.project.ftc.service;
 
 
-import aca.project.ftc.exception.CustomException;
 import aca.project.ftc.exception.UnauthorizedRequest;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.constants.Gender;
@@ -38,7 +37,6 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public UserModel editUser(UserEditRequest userEditRequest, Long id) {
-        //TODO::CHANGE THE LOGIC IN HERE
         Optional<UserModel> user = userRepository.findById(id);
         if (user.isPresent()) {
             try {
@@ -49,8 +47,6 @@ public class UserService {
             return validateUserData(userEditRequest, user.get());
         }
         throw new UserNotFound("USER_NOT_FOUND");
-
-
     }
 
     public UserResponseDto resetPassword(ResetRequestDto resetRequestDto, Long id) {

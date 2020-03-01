@@ -40,6 +40,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationResponseDto);
     }
 
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<NotificationResponseDto> deleteNotification( @PathVariable Long id) {
         NotificationResponseDto notificationResponseDto = notificationService.deleteNotification(id);
