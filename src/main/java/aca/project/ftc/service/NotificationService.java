@@ -8,6 +8,7 @@ import aca.project.ftc.model.dto.response.notification.NotificationResponseDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.NotificationModel;
+import aca.project.ftc.model.entity.UserProductModel;
 import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
@@ -70,12 +71,12 @@ public class NotificationService {
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {
-        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndStatusIsOrStatusIsOrderByUpdatedAtDesc(id, NotificationStatus.ACCEPTED, NotificationStatus.REJECTED);
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(id, true, NotificationStatus.ACCEPTED, NotificationStatus.REJECTED);
         return getResponseList(notificationResponseDto);
     }
 
     public List<NotificationResponseDto> companyNotification(Long id) {
-        List<NotificationModel> notificationResponseDto = notificationRepository.findAllByReceiverIdAndStatusIsOrderByUpdatedAtDesc(id, NotificationStatus.PENDING);
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllByReceiverIdAndIsActiveAndStatusIsOrderByUpdatedAtDesc(id, true, NotificationStatus.PENDING);
         return getResponseList(notificationResponseDto);
     }
 
@@ -96,6 +97,11 @@ public class NotificationService {
                 System.out.println(id);
                 NotificationModel notificationModel = notificationRepository.findById(id).get();
                 notificationModel.setStatus(NotificationStatus.valueOf(notificationEditRequestDto.getStatus().toUpperCase()));
+                if (notificationEditRequestDto.getStatus().toUpperCase().equals("ACCEPTED")) {
+                    UserProductModel userProductModel = notificationModel.getUserProduct();
+                    userProductModel.setIsActive(false);
+                    userProductRepository.save(userProductModel);
+                }
                 notificationRepository.save(notificationModel);
                 return getNotificationResponseDto(notificationModel);
             } //TODO:: CHANGE THE EXCEPTION TYPE
@@ -108,7 +114,9 @@ public class NotificationService {
     public NotificationResponseDto deleteNotification(Long id) {
         if (notificationRepository.existsById(id)) {
             NotificationModel notificationModel = notificationRepository.findById(id).get();
-            notificationRepository.deleteById(id);
+            notificationModel.setIsActive(false);
+            notificationModel.setStatus(NotificationStatus.CLOSED);
+            notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);
         }
         //TODO:: REMOVE AND CHANGE THE EXCEPTION

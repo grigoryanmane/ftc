@@ -1,5 +1,6 @@
 package aca.project.ftc.auth;
 
+import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,14 @@ public class JwtUserDetailsService implements UserDetailsService {
     private UserRepository userRepository; //TODO::SHOULD I MAKE THIS PRIVATE
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UserNotFound {
         Optional<UserModel> user = userRepository.findByUsername(username);
         //TODO:: Check whether this is the correct way of loading user and its details for authentication
         if (user.isPresent()) {
             return new User(user.get().getUsername(),user.get().getPassword(),
                     new ArrayList<>());
         } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UserNotFound("USER_NOT_FOUND_WITH_USERNAME: " + username);
         }
     }
 }

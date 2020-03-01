@@ -35,6 +35,9 @@ public class NotificationModel extends BaseModel {
     @Size(max = 150)
     private String message;
 
+
+    private Boolean isActive = true;
+
     private NotificationStatus status = NotificationStatus.PENDING;
 
 

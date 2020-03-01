@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @CrossOrigin(value = "*", origins = "*")
 @RequestMapping(value = "api/v1")
@@ -18,7 +20,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public ResponseEntity<AuthenticationResponseDto> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<AuthenticationResponseDto> signup(@RequestBody SignupRequest signupRequest) throws ParseException {
         AuthenticationResponseDto result = authenticationService.signup(signupRequest);
         return ResponseEntity.ok(result);
     }
@@ -28,7 +30,6 @@ public class AuthenticationController {
         AuthenticationResponseDto result = authenticationService.login(authenticationRequestDto);
         return ResponseEntity.ok(result);
     }
-
 
     //TODO:: WHERE THIS NEEDS TO BE IN ORDER TO WORK PROPERLY, WHEN NO TOKEN IS AVAILABLE OR TOKEN IS EXPIRED
     @ExceptionHandler(BadCredentialsException.class)

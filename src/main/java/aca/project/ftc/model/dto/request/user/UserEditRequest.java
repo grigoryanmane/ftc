@@ -20,9 +20,9 @@ public class UserEditRequest {
 
     private String phoneNumber;
 
-    private Region region;
+    private String region;
 
-    private Gender gender;
+    private String gender;
 
-    private Date birthDate;
+    private String birthDate;
 }
