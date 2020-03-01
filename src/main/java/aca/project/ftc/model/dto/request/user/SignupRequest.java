@@ -26,10 +26,10 @@ public class SignupRequest {
 
     private String phoneNumber;
 
-    private Gender gender;
+    private String gender;
 
-    private Date birthDate;
+    private String birthDate;
 
-    private Region region;
+    private String region;
 
 }

@@ -1,9 +1,18 @@
 package aca.project.ftc.exception;
 
-import java.security.SecureRandom;
-
 public class UnauthorizedRequest extends RuntimeException {
-    private String message;
-    private String cause;
+    public UnauthorizedRequest() {
+    }
 
+    public UnauthorizedRequest(String message) {
+        super(message);
+    }
+
+    public UnauthorizedRequest(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UnauthorizedRequest(Throwable cause) {
+        super(cause);
+    }
 }

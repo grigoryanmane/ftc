@@ -16,5 +16,7 @@ public class ProductResponseDto {
     private Double quantity;
     private String description;
     private Boolean isActive;
+    private Integer pageCount;
+    private Integer totalElement;
 
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum NotificationStatus {
-    PENDING("Pending"), ACCEPTED("Accepted"), REJECTED("Rejected");
+    PENDING("Pending"), ACCEPTED("Accepted"), REJECTED("Rejected"), CLOSED("Closed");
 
     private final String key;
 

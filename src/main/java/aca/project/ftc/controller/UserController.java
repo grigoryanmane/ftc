@@ -9,6 +9,8 @@ import aca.project.ftc.model.dto.request.user.UserEditRequest;
 import aca.project.ftc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
@@ -37,9 +39,9 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDto> getUserDara(@PathVariable Long id) {
-        UserResponseDto userResponseDto = userService.getUserData(id);
+    @GetMapping
+    public ResponseEntity<UserResponseDto> getUserDara(@AuthenticationPrincipal UserDetails user) {
+        UserResponseDto userResponseDto = userService.getUserData(user);
         return ResponseEntity.ok(userResponseDto);
     }
 
@@ -53,6 +55,5 @@ public class UserController {
     public ResponseEntity<Boolean> checkUsername(@RequestBody UsernameCheckDto usernameCheckDto) {
         return ResponseEntity.ok(userService.checkUsername(usernameCheckDto));
     }
-
 
 }

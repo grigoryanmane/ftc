@@ -1,7 +1,11 @@
 package aca.project.ftc.service;
 
 
+import aca.project.ftc.exception.CustomException;
+import aca.project.ftc.exception.UnauthorizedRequest;
 import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.model.constants.Gender;
+import aca.project.ftc.model.constants.Region;
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
 import aca.project.ftc.model.dto.request.user.ResetRequestDto;
 import aca.project.ftc.model.dto.request.user.UserEditRequest;
@@ -10,10 +14,14 @@ import aca.project.ftc.model.dto.response.user.UserResponseDto;
 import aca.project.ftc.model.entity.UserModel;
 import aca.project.ftc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -36,9 +44,9 @@ public class UserService {
             try {
                 authenticationService.authenticate(user.get().getUsername(), userEditRequest.getPassword());
             } catch (Exception e) {
-                throw new UserNotFound("INVALID_CREDENTIALS");
+                throw new UnauthorizedRequest("INVALID_CREDENTIALS");
             }
-            return checkUserData(userEditRequest, user.get());
+            return validateUserData(userEditRequest, user.get());
         }
         throw new UserNotFound("USER_NOT_FOUND");
 
@@ -71,53 +79,60 @@ public class UserService {
             try {
                 authenticationService.authenticate(user.get().getUsername(), authenticationRequestDto.getPassword());
             } catch (Exception e) {
-                throw new UserNotFound("INVALID_CREDENTIALS");
+                throw new UnauthorizedRequest("INVALID_CREDENTIALS");
             }
             userResponseDto = getUserResponseData(user.get());
             userRepository.deleteById(id);
             return userResponseDto;
-        } else {
-            throw new UserNotFound("User Not Found");
         }
-        //TODO::SHOULD I CHANGE THIS? Do not forget to remove token from front end and logout the user
+        throw new UserNotFound("USER_NOT_FOUND_WITH_ID_AND_USERNAME");
 
     }
 
-    //TODO:: Add three calls here: checkUsername,addNotification,checkNotification
-
-
-    public UserResponseDto getUserData(Long id) {
-        Optional<UserModel> userModel = userRepository.findById(id);
+    public UserResponseDto getUserData(UserDetails userDetails) {
+        Optional<UserModel> userModel = userRepository.findByUsername(userDetails.getUsername());
         if (userModel.isPresent()) {
             return getUserResponseData(userModel.get());
         }
-        throw new UserNotFound("USER_NOT_FOUND");
+        throw new UserNotFound("USER_NOT_FOUND_WITH_USERNAME");
     }
 
+    public UserModel validateUserData(UserEditRequest userEditRequest, UserModel userModel) {
 
-    public UserModel checkUserData(UserEditRequest userEditRequest, UserModel userModel) {
         if (!userEditRequest.getFirstName().isEmpty()) {
+            authenticationService.isValidFirstName(userEditRequest.getFirstName());
             userModel.setFirstName(userEditRequest.getFirstName());
         }
         if (!userEditRequest.getLastName().isEmpty()) {
+            authenticationService.isValidLastName(userEditRequest.getLastName());
             userModel.setLastName(userEditRequest.getLastName());
         }
         if (!userEditRequest.getPhoneNumber().isEmpty()) {
+            authenticationService.isValidPhoneNumber(userEditRequest.getPhoneNumber());
             userModel.setPhoneNumber(userEditRequest.getPhoneNumber());
         }
         if (!(userEditRequest.getRegion() == null)) {
-            userModel.setRegion(userEditRequest.getRegion());
+            authenticationService.isValidRegion(userEditRequest.getRegion());
+            userModel.setRegion(Region.valueOf(userEditRequest.getRegion().toUpperCase()));
         }
         if (!(userEditRequest.getGender() == null)) {
-            userModel.setGender(userEditRequest.getGender());
+            authenticationService.isValidGender(userEditRequest.getGender());
+            userModel.setGender(Gender.valueOf(userEditRequest.getGender().toUpperCase()));
         }
         if (!(userEditRequest.getBirthDate() == null)) {
-            userModel.setBirthDate(userEditRequest.getBirthDate());
+            authenticationService.isValidBirthDate(userEditRequest.getBirthDate());
+            Date birthDate = null;
+            try {
+                birthDate = new SimpleDateFormat("yyyy-MM-dd").parse(userEditRequest.getBirthDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         userRepository.save(userModel);
         return userModel;
 
     }
+
 
     public UserResponseDto getUserResponseData(UserModel userModel) {
         UserResponseDto userResponseDto = new UserResponseDto();

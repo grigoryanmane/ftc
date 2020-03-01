@@ -1,23 +1,34 @@
 package aca.project.ftc.repository;
 
 import aca.project.ftc.model.entity.UserProductModel;
-import org.hibernate.annotations.OrderBy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserProductRepository extends PagingAndSortingRepository<UserProductModel, Long> {
+public interface UserProductRepository extends JpaRepository<UserProductModel, Long> {
 
-    List<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id);
-    List<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive);
+    Page<UserProductModel> findByUserIdOrderByUpdatedAtDesc(Long id, Pageable pageable);
+
+    Page<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive, Pageable pageable);
+
+    Page<UserProductModel> findAllByUserIdAndProductIdAndIsActiveOrderByUpdatedAtDesc(Long userId, Long productId, Boolean isActive, Pageable pageable);
+
+    Page<UserProductModel> findAllByUserIdAndProductIdOrderByUpdatedAtDesc(Long userId, Long productId, Pageable pageable);
+
+    Page<UserProductModel> findAllByUserIdAndIsActiveOrderByUpdatedAtDesc(Long userId, Boolean isActive, Pageable pageable);
+
+    Page<UserProductModel> findAllByProductIdAndIsActiveOrderByUpdatedAtDesc(Long productId, Boolean isActive, Pageable pageable);
+
+
     @Override
     boolean existsById(Long aLong);
 
     List<UserProductModel> findByProductId(Long id);
 
-    Optional<UserProductModel> findAllByIsActive(Boolean isActive);
 
     Optional<UserProductModel> findByAmountIsLessThanEqual(Double amount);
 
