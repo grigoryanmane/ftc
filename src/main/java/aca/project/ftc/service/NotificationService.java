@@ -159,7 +159,6 @@ public class NotificationService {
         if ((notificationEditRequestDto.getStatus() == null)) {
             throw new InvalidRequest("NOTIFICATION_STATUS_CANNOT_BE_NULL");
         }
-
         if (!Arrays.stream(NotificationStatus.values())
                 .map(NotificationStatus::name)
                 .collect(Collectors.toSet())
