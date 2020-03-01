@@ -24,20 +24,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.management.openmbean.InvalidKeyException;
-import java.security.InvalidParameterException;
-import java.text.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -79,7 +74,6 @@ public class AuthenticationService {
         try {
             authenticate(authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword());
         } catch (Exception e) {
-            //TODO Log the exception and throw correct exception
             throw new UnauthorizedRequest("INVALID_CREDENTIALS");
         }
 
@@ -94,10 +88,23 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
+            log.error("");
             throw new UnauthorizedRequest("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new UnauthorizedRequest("INVALID_CREDENTIALS", e);
         }
+    }
+
+    public boolean isValidSignUp(SignupRequest signupRequest) {
+        return isValidPassword(signupRequest.getPassword()) &&
+                isValidUsername(signupRequest.getUsername()) &&
+                isValidBirthDate(signupRequest.getBirthDate()) &&
+                isValidFirstName(signupRequest.getFirstName()) &&
+                isValidLastName(signupRequest.getLastName()) &&
+                isValidPhoneNumber(signupRequest.getPhoneNumber()) &&
+                isValidBirthDate(signupRequest.getBirthDate()) &&
+                isValidGender(signupRequest.getGender()) &&
+                isValidRegion(signupRequest.getRegion());
     }
 
     public UserModel setUserData(SignupRequest signupRequest) {
@@ -167,18 +174,6 @@ public class AuthenticationService {
         }
         return true;
     }
-    public boolean isValidSignUp(SignupRequest signupRequest) {
-        return isValidPassword(signupRequest.getPassword()) &&
-                isValidUsername(signupRequest.getUsername()) &&
-                isValidBirthDate(signupRequest.getBirthDate()) &&
-                isValidFirstName(signupRequest.getFirstName()) &&
-                isValidLastName(signupRequest.getLastName()) &&
-                isValidPhoneNumber(signupRequest.getPhoneNumber()) &&
-                isValidBirthDate(signupRequest.getBirthDate()) &&
-                isValidGender(signupRequest.getGender()) &&
-                isValidRegion(signupRequest.getRegion());
-    }
-
     public boolean isValidPhoneNumber(String phoneNumber) {
         String regex = "(\\+374)[0-9]{8}";
         Pattern pattern = Pattern.compile(regex);

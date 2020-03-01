@@ -1,5 +1,7 @@
 package aca.project.ftc.service;
 
+import aca.project.ftc.exception.InvalidRequest;
+import aca.project.ftc.exception.NotificationNotFound;
 import aca.project.ftc.exception.UserNotFound;
 import aca.project.ftc.model.constants.NotificationStatus;
 import aca.project.ftc.model.dto.request.notification.NotificationEditRequestDto;
@@ -13,6 +15,7 @@ import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,33 +44,27 @@ public class NotificationService {
     private ProductRepository productRepository;
 
     public NotificationResponseDto addNotification(NotificationRequestDto notificationRequestDto) {
-        try {
-            if (userRepository.existsById(notificationRequestDto.getReceiverId())
-                    && userRepository.existsById(notificationRequestDto.getSenderId())
-                    && userProductRepository.existsById(notificationRequestDto.getUserProductId())) {
-                NotificationModel notificationModel = new NotificationModel();
-                notificationModel.setReceiver(userRepository.findById(notificationRequestDto.getReceiverId()).get());
-                notificationModel.setSender(userRepository.findById(notificationRequestDto.getSenderId()).get());
-                notificationModel.setUserProduct(userProductRepository.findById(notificationRequestDto.getUserProductId()).get());
-                notificationModel.setMessage(notificationRequestDto.getMessage());
-                notificationModel.setStatus(NotificationStatus.PENDING);
-                notificationRepository.save(notificationModel);
-                return getNotificationResponseDto(notificationModel);
-            }
-            throw new UserNotFound("INVALID_REQUEST");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new UserNotFound("INVALID_REQUEST");
-
+        if (userRepository.existsById(notificationRequestDto.getReceiverId())
+                && userRepository.existsById(notificationRequestDto.getSenderId())
+                && userProductRepository.existsById(notificationRequestDto.getUserProductId())) {
+            NotificationModel notificationModel = new NotificationModel();
+            notificationModel.setReceiver(userRepository.findById(notificationRequestDto.getReceiverId()).get());
+            notificationModel.setSender(userRepository.findById(notificationRequestDto.getSenderId()).get());
+            notificationModel.setUserProduct(userProductRepository.findById(notificationRequestDto.getUserProductId()).get());
+            notificationModel.setMessage(notificationRequestDto.getMessage());
+            notificationModel.setStatus(NotificationStatus.PENDING);
+            notificationRepository.save(notificationModel);
+            return getNotificationResponseDto(notificationModel);
         }
+        //TODO::Validate one by one
+        throw new InvalidRequest("INVALID_ADD_NOTIFICATION_REQUEST");
     }
 
     public NotificationResponseDto getNotification(Long id) {
         if (notificationRepository.existsById(id)) {
             return getNotificationResponseDto(notificationRepository.findById(id).get());
         }
-        //TODO::GIVE NORMAL EXCEPTION
-        throw new UserNotFound("NOTIFICATION NOT FOUND");
+        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {
@@ -92,23 +89,18 @@ public class NotificationService {
     }
 
     public NotificationResponseDto editNotification(NotificationEditRequestDto notificationEditRequestDto, Long id) {
-        try {
-            if (notificationRepository.existsById(id)) {
-                System.out.println(id);
-                NotificationModel notificationModel = notificationRepository.findById(id).get();
-                notificationModel.setStatus(NotificationStatus.valueOf(notificationEditRequestDto.getStatus().toUpperCase()));
-                if (notificationEditRequestDto.getStatus().toUpperCase().equals("ACCEPTED")) {
-                    UserProductModel userProductModel = notificationModel.getUserProduct();
-                    userProductModel.setIsActive(false);
-                    userProductRepository.save(userProductModel);
-                }
-                notificationRepository.save(notificationModel);
-                return getNotificationResponseDto(notificationModel);
-            } //TODO:: CHANGE THE EXCEPTION TYPE
-            throw new UserNotFound("INVALID NOTIFICATION");
-        } catch (Exception e) {
-            throw new UserNotFound("SOME EXCEPTION");
+        if (notificationRepository.existsById(id)) {
+            NotificationModel notificationModel = notificationRepository.findById(id).get();
+            notificationModel.setStatus(NotificationStatus.valueOf(notificationEditRequestDto.getStatus().toUpperCase()));
+            if (notificationEditRequestDto.getStatus().toUpperCase().equals("ACCEPTED")) {
+                UserProductModel userProductModel = notificationModel.getUserProduct();
+                userProductModel.setIsActive(false);
+                userProductRepository.save(userProductModel);
+            }
+            notificationRepository.save(notificationModel);
+            return getNotificationResponseDto(notificationModel);
         }
+        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
     }
 
     public NotificationResponseDto deleteNotification(Long id) {

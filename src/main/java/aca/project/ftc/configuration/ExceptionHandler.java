@@ -1,4 +1,4 @@
-package aca.project.ftc;
+package aca.project.ftc.configuration;
 
 import aca.project.ftc.exception.*;
 import javassist.NotFoundException;
@@ -63,10 +63,11 @@ public class ExceptionHandler {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-
-
-
+    @org.springframework.web.bind.annotation.ExceptionHandler(NotificationNotFound.class)
+    public ResponseEntity<ErrorResponse> handleException(NotificationNotFound ex) {
+        log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
+        return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleException(RuntimeException ex) {

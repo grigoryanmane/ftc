@@ -1,4 +1,4 @@
-package aca.project.ftc;
+package aca.project.ftc.configuration;
 
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
