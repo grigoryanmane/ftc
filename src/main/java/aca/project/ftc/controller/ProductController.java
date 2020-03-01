@@ -31,27 +31,31 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    @GetMapping(value = "/{id}", params = {"page", "size"})
+    @GetMapping(value = "/{id}", params = {"page", "size", "productId", "isActive"})
     public ResponseEntity<ProductListResponseDto> getUserProductList(@PathVariable Long id,
                                                                      @RequestParam("page") Integer page,
-                                                                     @RequestParam("size") Integer size) {
-        ProductListResponseDto userProductList = productService.getUserProductList(id, page, size);
+                                                                     @RequestParam("size") Integer size,
+                                                                     @RequestParam("productId") Long productId,
+                                                                     @RequestParam("isActive") Boolean isActive) {
+        ProductListResponseDto userProductList = productService.getUserProductList(id, page, size, productId, isActive);
         return ResponseEntity.ok(userProductList);
     }
 
-    @GetMapping(value = "", params = {"page", "size"})
-    public ResponseEntity<ProductListResponseDto> getAllProducts(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        ProductListResponseDto productListResponseDto = productService.getAllProducts(page, size);
+    @GetMapping(value = "", params = {"page", "size", "productId"})
+    public ResponseEntity<ProductListResponseDto> getAllProducts(@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam("productId") Long productId) {
+        ProductListResponseDto productListResponseDto = productService.getAllProducts(page, size, productId);
         return ResponseEntity.ok(productListResponseDto);
     }
 
 
-    @PutMapping(value = "/{id}", params = {"page", "size"})
+    @PutMapping(value = "/{id}", params = {"page", "size", "productId", "isActive"})
     public ResponseEntity<ProductListResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto,
                                                               @PathVariable Long id,
                                                               @RequestParam("page") Integer page,
-                                                              @RequestParam("size") Integer size) {
-        ProductListResponseDto productListResponseDto = productService.editProduct(productRequestDto, id, page, size);
+                                                              @RequestParam("size") Integer size,
+                                                              @RequestParam("productId") Long productId,
+                                                              @RequestParam("isActive") Boolean isActive) {
+        ProductListResponseDto productListResponseDto = productService.editProduct(productRequestDto, id, page, size, productId, isActive);
         return ResponseEntity.ok(productListResponseDto);
     }
 

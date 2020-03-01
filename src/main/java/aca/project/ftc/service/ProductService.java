@@ -33,7 +33,7 @@ public class ProductService {
     private UserRepository userRepository;
 
 
-    public ProductListResponseDto editProduct(ProductRequestDto productRequestDto, Long id, Integer page, Integer size) {
+    public ProductListResponseDto editProduct(ProductRequestDto productRequestDto, Long id, Integer page, Integer size, Long productId, Boolean isActive) {
 
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
@@ -47,13 +47,13 @@ public class ProductService {
                 userProductModel.setDescription(productRequestDto.getDescription());
             }
             userProductRepository.save(userProductModel);
-            return getUserProductList(userProductModel.getUser().getId(), page, size);
+            return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
         }
         //TODO:: CHANGE THE EXCEPTION
         throw new UserNotFound("USER_NOT_FOUND");
     }
 
-    public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size) {
+    public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size, Long productId, Boolean isActive) {
         if (page == null) {
             page = 0;
         }
@@ -62,7 +62,7 @@ public class ProductService {
         }
         ProductListResponseDto productListResponseDto = new ProductListResponseDto();
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserProductModel> userProductModel = userProductRepository.findByUserIdOrderByUpdatedAtDesc(id, pageable);
+        Page<UserProductModel> userProductModel = filterUserProducts(id, productId, isActive, pageable);
         List<UserProductModel> userProductModelList = userProductModel.toList();
         if (!userProductModel.isEmpty()) {
             productListResponseDto.setProductResponseDtoList(getTheList(userProductModelList));
@@ -74,16 +74,17 @@ public class ProductService {
         return productListResponseDto;
     }
 
-    public ProductListResponseDto getAllProducts(Integer page, Integer size) {
+    public ProductListResponseDto getAllProducts(Integer page, Integer size, Long productId) {
         if (page == null) {
             page = 0;
         }
         if (size == null) {
             size = 10;
         }
+
         ProductListResponseDto productListResponseDto = new ProductListResponseDto();
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserProductModel> userProductModel = userProductRepository.findAllByIsActiveOrderByUpdatedAtDesc(true, pageable);
+        Page<UserProductModel> userProductModel = filterAllProducts(productId, true, pageable);
         productListResponseDto.setTotalElements(userProductModel.getTotalElements());
         productListResponseDto.setPageCount(userProductModel.getTotalPages());
         List<UserProductModel> userProductModelList = userProductModel.toList();
@@ -145,6 +146,28 @@ public class ProductService {
         userProductModel.setDescription(productRequestDto.getDescription());
         userProductRepository.save(userProductModel);
         return setUserProductDto(userProductModel);
+    }
+
+    public Page<UserProductModel> filterUserProducts(Long userId, Long productId, Boolean isActive, Pageable pageable) {
+        if (productId != null && isActive != null) {
+            return userProductRepository.findAllByUserIdAndProductIdAndIsActiveOrderByUpdatedAtDesc(userId, productId, isActive, pageable);
+        }
+        if (productId == null && isActive != null) {
+            return userProductRepository.findAllByUserIdAndIsActiveOrderByUpdatedAtDesc(userId, isActive, pageable);
+        }
+        if (productId != null) {
+            return userProductRepository.findAllByUserIdAndProductIdOrderByUpdatedAtDesc(userId, productId, pageable);
+        }
+        return userProductRepository.findByUserIdOrderByUpdatedAtDesc(userId, pageable);
+
+    }
+
+    public Page<UserProductModel> filterAllProducts(Long productId, Boolean isActive, Pageable pageable) {
+        if (productId != null) {
+            return userProductRepository.findAllByProductIdAndIsActiveOrderByUpdatedAtDesc(productId, isActive, pageable);
+        }
+        return userProductRepository.findAllByIsActiveOrderByUpdatedAtDesc(isActive, pageable);
+
     }
 
 

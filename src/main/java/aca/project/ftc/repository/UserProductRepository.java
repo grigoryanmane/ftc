@@ -15,14 +15,20 @@ public interface UserProductRepository extends JpaRepository<UserProductModel, L
 
     Page<UserProductModel> findAllByIsActiveOrderByUpdatedAtDesc(Boolean isActive, Pageable pageable);
 
+    Page<UserProductModel> findAllByUserIdAndProductIdAndIsActiveOrderByUpdatedAtDesc(Long userId, Long productId, Boolean isActive, Pageable pageable);
+
+    Page<UserProductModel> findAllByUserIdAndProductIdOrderByUpdatedAtDesc(Long userId, Long productId, Pageable pageable);
+
+    Page<UserProductModel> findAllByUserIdAndIsActiveOrderByUpdatedAtDesc(Long userId, Boolean isActive, Pageable pageable);
+
+    Page<UserProductModel> findAllByProductIdAndIsActiveOrderByUpdatedAtDesc(Long productId, Boolean isActive, Pageable pageable);
+
 
     @Override
     boolean existsById(Long aLong);
 
-
     List<UserProductModel> findByProductId(Long id);
 
-    Optional<UserProductModel> findAllByIsActive(Boolean isActive);
 
     Optional<UserProductModel> findByAmountIsLessThanEqual(Double amount);
 
