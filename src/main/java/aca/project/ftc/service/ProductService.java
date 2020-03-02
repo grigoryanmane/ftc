@@ -1,10 +1,7 @@
 package aca.project.ftc.service;
 
 
-import aca.project.ftc.exception.CustomException;
-import aca.project.ftc.exception.InvalidRequest;
-import aca.project.ftc.exception.ProductNotFoundException;
-import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.exception.*;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
 import aca.project.ftc.model.dto.response.product.ProductListResponseDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
@@ -38,10 +35,16 @@ public class ProductService {
 
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
-            if (productRequestDto.getAmount() != null) {
+            if (productRequestDto.getAmount() != null ) {
+                if(productRequestDto.getAmount() <=0){
+                    throw new InvalidParameters("AMOUNT_SHOULD_BE_ABOVE_ZERO");
+                }
                 userProductModel.setAmount(productRequestDto.getAmount());
             }
             if (productRequestDto.getQuantity() != null) {
+                if(productRequestDto.getQuantity() <=0){
+                    throw new InvalidParameters("QUANTITY_SHOULD_BE_ABOVE_ZERO");
+                }
                 userProductModel.setQuantity(productRequestDto.getQuantity());
             }
             if (!productRequestDto.getDescription().equals("")) {
@@ -174,7 +177,7 @@ public class ProductService {
 
 
     public void validAddRequest(ProductRequestDto productRequestDto) {
-        if (productRequestDto.getUserId() == null) {
+        if (productRequestDto.getUserId() == null ) {
             throw new InvalidRequest("USER_ID_CANNOT_BE_NULL");
         }
         if (productRequestDto.getProductId() == null) {
@@ -183,8 +186,14 @@ public class ProductService {
         if (productRequestDto.getAmount() == null) {
             throw new InvalidRequest("AMOUNT_CANNOT_BE_NULL");
         }
+        if (productRequestDto.getAmount() <= 0) {
+            throw new InvalidRequest("AMOUNT_SHOULD_BE_ABOVE_ZERO");
+        }
         if (productRequestDto.getQuantity() == null) {
             throw new InvalidRequest("QUANTITY_CANNOT_BE_NULL");
+        }
+        if (productRequestDto.getQuantity() <= 0) {
+            throw new InvalidRequest("QUANTITY_SHOULD_BE_ABOVE_ZERO");
         }
         if (productRequestDto.getDescription().equals("")) {
             throw new InvalidRequest("DESCRIPTION_CANNOT_BE_NULL");
