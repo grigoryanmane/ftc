@@ -34,7 +34,6 @@ public class ProductService {
     @Autowired
     private UserRepository userRepository;
 
-
     public ProductListResponseDto editProduct(ProductRequestDto productRequestDto, Long id, Integer page, Integer size, Long productId, Boolean isActive) {
 
         if (userProductRepository.existsById(id)) {
@@ -53,7 +52,6 @@ public class ProductService {
         }
         throw new UserNotFound("USER_NOT_FOUND");
     }
-
     public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size, Long productId, Boolean isActive) {
         if (page == null) {
             page = 0;

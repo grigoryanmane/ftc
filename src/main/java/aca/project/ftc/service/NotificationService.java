@@ -86,6 +86,7 @@ public class NotificationService {
         }
         return notificationResponseDtoList;
     }
+
     public NotificationResponseDto editNotification(NotificationEditRequestDto notificationEditRequestDto, Long id) {
         validateEditRequest(notificationEditRequestDto);
         if (notificationRepository.existsById(id)) {
@@ -111,6 +112,19 @@ public class NotificationService {
             return getNotificationResponseDto(notificationModel);
         }
         throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
+    }
+
+    public void validateEditRequest(NotificationEditRequestDto notificationEditRequestDto) {
+
+        if ((notificationEditRequestDto.getStatus() == null)) {
+            throw new InvalidRequest("NOTIFICATION_STATUS_CANNOT_BE_NULL");
+        }
+        if (!Arrays.stream(NotificationStatus.values())
+                .map(NotificationStatus::name)
+                .collect(Collectors.toSet())
+                .contains(notificationEditRequestDto.getStatus().toUpperCase())) {
+            throw new InvalidParameters("INVALID_NOTIFICATION_STATUS_PARAMETER");
+        }
     }
 
     public NotificationResponseDto getNotificationResponseDto(NotificationModel notificationModel) {
@@ -154,18 +168,6 @@ public class NotificationService {
     }
 
 
-    public void validateEditRequest(NotificationEditRequestDto notificationEditRequestDto) {
-
-        if ((notificationEditRequestDto.getStatus() == null)) {
-            throw new InvalidRequest("NOTIFICATION_STATUS_CANNOT_BE_NULL");
-        }
-        if (!Arrays.stream(NotificationStatus.values())
-                .map(NotificationStatus::name)
-                .collect(Collectors.toSet())
-                .contains(notificationEditRequestDto.getStatus().toUpperCase())) {
-            throw new InvalidParameters("INVALID_NOTIFICATION_STATUS_PARAMETER");
-        }
-    }
 }
 
 
