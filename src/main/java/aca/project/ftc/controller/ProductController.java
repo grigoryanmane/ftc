@@ -31,18 +31,21 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    @GetMapping(value = "/{id}", params = {"page", "size", "productId", "isActive"})
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ProductListResponseDto> getUserProductList(@PathVariable Long id,
-                                                                     @RequestParam("page") Integer page,
-                                                                     @RequestParam("size") Integer size,
-                                                                     @RequestParam("productId") Long productId,
-                                                                     @RequestParam("isActive") Boolean isActive) {
+                                                                     @RequestParam(value = "page", required = false, defaultValue = "") Integer page,
+                                                                     @RequestParam(value = "size", required = false, defaultValue = "") Integer size,
+                                                                     @RequestParam(value = "productId", required = false, defaultValue = "") Long productId,
+                                                                     @RequestParam(value = "isActive", required = false, defaultValue = "") Boolean isActive) {
         ProductListResponseDto userProductList = productService.getUserProductList(id, page, size, productId, isActive);
         return ResponseEntity.ok(userProductList);
     }
 
-    @GetMapping(value = "", params = {"page", "size", "productId"})
-    public ResponseEntity<ProductListResponseDto> getAllProducts(@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam("productId") Long productId) {
+    @GetMapping(value = "")
+    public ResponseEntity<ProductListResponseDto> getAllProducts(
+            @RequestParam(value = "page", required = false, defaultValue = "") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "") Integer size,
+            @RequestParam(value = "productId", required = false, defaultValue = "") Long productId) {
         ProductListResponseDto productListResponseDto = productService.getAllProducts(page, size, productId);
         return ResponseEntity.ok(productListResponseDto);
     }

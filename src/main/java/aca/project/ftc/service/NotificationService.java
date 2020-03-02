@@ -13,6 +13,7 @@ import aca.project.ftc.repository.NotificationRepository;
 import aca.project.ftc.repository.ProductRepository;
 import aca.project.ftc.repository.UserProductRepository;
 import aca.project.ftc.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class NotificationService {
 
@@ -60,10 +62,14 @@ public class NotificationService {
 
     public NotificationResponseDto getNotification(Long id) {
         if (userProductRepository.existsById(id)) {
-            NotificationModel notificationModel = notificationRepository.findAllByUserProductIdAndStatus(id, NotificationStatus.ACCEPTED).get();
-            return getNotificationResponseDto(notificationModel);
+            try {
+                NotificationModel notificationModel = notificationRepository.findAllByUserProductIdAndStatus(id, NotificationStatus.ACCEPTED).get();
+                return getNotificationResponseDto(notificationModel);
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage(), e.getCause());
+            }
         }
-        throw new NotificationNotFound("USER_PRODUCT__NOTIFICATION_NOT_FOUND");
+        throw new NotificationNotFound("USER_PRODUCT_NOTIFICATION_NOT_FOUND");
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {
