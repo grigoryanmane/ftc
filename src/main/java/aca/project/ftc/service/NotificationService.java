@@ -63,17 +63,18 @@ public class NotificationService {
     public NotificationResponseDto getNotification(Long id) {
         if (userProductRepository.existsById(id)) {
             try {
-                NotificationModel notificationModel = notificationRepository.findAllByUserProductIdAndStatus(id, NotificationStatus.ACCEPTED).get();
+                NotificationModel notificationModel = notificationRepository.findByUserProductIdAndStatusIn(id, Arrays.asList(NotificationStatus.ACCEPTED,NotificationStatus.CLOSED)).get();
                 return getNotificationResponseDto(notificationModel);
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e.getCause());
+                throw new InvalidRequestException(e.getMessage());
             }
         }
-        throw new NotificationNotFound("USER_PRODUCT_NOTIFICATION_NOT_FOUND");
+        throw new NotificationNotFoundException("USER_PRODUCT_NOTIFICATION_NOT_FOUND");
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {
-        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(id, true, NotificationStatus.ACCEPTED, NotificationStatus.REJECTED);
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndIsActiveAndStatusInOrderByUpdatedAtDesc(id, true, Arrays.asList(NotificationStatus.ACCEPTED, NotificationStatus.REJECTED));
         return getResponseList(notificationResponseDto);
     }
 
@@ -106,30 +107,29 @@ public class NotificationService {
             notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);
         }
-        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
+        throw new NotificationNotFoundException("NOTIFICATION_NOT_FOUND");
     }
 
     public NotificationResponseDto deleteNotification(Long id) {
         if (notificationRepository.existsById(id)) {
             NotificationModel notificationModel = notificationRepository.findById(id).get();
-            notificationModel.setIsActive(false);
             notificationModel.setStatus(NotificationStatus.CLOSED);
             notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);
         }
-        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
+        throw new NotificationNotFoundException("NOTIFICATION_NOT_FOUND");
     }
 
     public void validateEditRequest(NotificationEditRequestDto notificationEditRequestDto) {
 
         if ((notificationEditRequestDto.getStatus() == null)) {
-            throw new InvalidRequest("NOTIFICATION_STATUS_CANNOT_BE_NULL");
+            throw new InvalidRequestException("NOTIFICATION_STATUS_CANNOT_BE_NULL");
         }
         if (!Arrays.stream(NotificationStatus.values())
                 .map(NotificationStatus::name)
                 .collect(Collectors.toSet())
                 .contains(notificationEditRequestDto.getStatus().toUpperCase())) {
-            throw new InvalidParameters("INVALID_NOTIFICATION_STATUS_PARAMETER");
+            throw new InvalidParameterException("INVALID_NOTIFICATION_STATUS_PARAMETER");
         }
     }
 
@@ -151,25 +151,25 @@ public class NotificationService {
 
     public void validateAddNotification(NotificationRequestDto notificationRequestDto) {
         if (notificationRequestDto.getUserProductId() == null) {
-            throw new InvalidRequest("USER_PRODUCT_ID_CANNOT_BE_NULL");
+            throw new InvalidRequestException("USER_PRODUCT_ID_CANNOT_BE_NULL");
         }
         if (notificationRequestDto.getReceiverId() == null) {
-            throw new InvalidRequest("RECEIVER_ID_CANNOT_BE_NULL");
+            throw new InvalidRequestException("RECEIVER_ID_CANNOT_BE_NULL");
         }
         if (notificationRequestDto.getSenderId() == null) {
-            throw new InvalidRequest("SENDER_ID_CANNOT_BE_NULL");
+            throw new InvalidRequestException("SENDER_ID_CANNOT_BE_NULL");
         }
         if (!userRepository.existsById(notificationRequestDto.getReceiverId())) {
-            throw new UserNotFound("NOTIFICATION_RECEIVER_NOT_FOUND");
+            throw new UserNotFoundException("NOTIFICATION_RECEIVER_NOT_FOUND");
         }
         if (!userRepository.existsById(notificationRequestDto.getSenderId())) {
-            throw new UserNotFound("NOTIFICATION_SENDER_NOT_FOUND");
+            throw new UserNotFoundException("NOTIFICATION_SENDER_NOT_FOUND");
         }
         if (!userProductRepository.existsById(notificationRequestDto.getUserProductId())) {
             throw new ProductNotFoundException("NOTIFICATION_PRODUCT_NOT_FOUND");
         }
         if (notificationRepository.existsByUserProductIdAndSenderIdAndReceiverId(notificationRequestDto.getUserProductId(), notificationRequestDto.getSenderId(), notificationRequestDto.getReceiverId())) {
-            throw new InvalidRequest("USER_HAS_ALREADY_APPLIED_FOR_THIS_PRODUCT");
+            throw new InvalidRequestException("USER_HAS_ALREADY_APPLIED_FOR_THIS_PRODUCT");
         }
     }
 

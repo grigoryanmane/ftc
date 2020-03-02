@@ -37,13 +37,13 @@ public class ProductService {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
             if (productRequestDto.getAmount() != null ) {
                 if(productRequestDto.getAmount() <=0){
-                    throw new InvalidParameters("AMOUNT_SHOULD_BE_ABOVE_ZERO");
+                    throw new InvalidParameterException("AMOUNT_SHOULD_BE_ABOVE_ZERO");
                 }
                 userProductModel.setAmount(productRequestDto.getAmount());
             }
             if (productRequestDto.getQuantity() != null) {
                 if(productRequestDto.getQuantity() <=0){
-                    throw new InvalidParameters("QUANTITY_SHOULD_BE_ABOVE_ZERO");
+                    throw new InvalidParameterException("QUANTITY_SHOULD_BE_ABOVE_ZERO");
                 }
                 userProductModel.setQuantity(productRequestDto.getQuantity());
             }
@@ -53,7 +53,7 @@ public class ProductService {
             userProductRepository.save(userProductModel);
             return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
         }
-        throw new UserNotFound("USER_NOT_FOUND");
+        throw new UserNotFoundException("USER_NOT_FOUND");
     }
     public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size, Long productId, Boolean isActive) {
         if (page == null) {
@@ -129,12 +129,10 @@ public class ProductService {
             userProductModel.setAmount(productRequestDto.getAmount());
             userProductModel.setQuantity(productRequestDto.getQuantity());
             userProductModel.setDescription(productRequestDto.getDescription());
-            userProductRepository.save(userProductModel);
-            return setUserProductDto(userProductModel);
+            return setUserProductDto(userProductRepository.save(userProductModel));
         }catch (Exception e){
             throw  new CustomException("UNEXPECTED_EXCEPTION: " .concat( e.getMessage()), e.getCause());
         }
-
     }
 
 
@@ -178,31 +176,31 @@ public class ProductService {
 
     public void validAddRequest(ProductRequestDto productRequestDto) {
         if (productRequestDto.getUserId() == null ) {
-            throw new InvalidRequest("USER_ID_CANNOT_BE_NULL");
+            throw new InvalidRequestException("USER_ID_CANNOT_BE_NULL");
         }
         if (productRequestDto.getProductId() == null) {
-            throw new InvalidRequest("PRODUCT_ID_CANNOT_BE_NULL");
+            throw new InvalidRequestException("PRODUCT_ID_CANNOT_BE_NULL");
         }
         if (productRequestDto.getAmount() == null) {
-            throw new InvalidRequest("AMOUNT_CANNOT_BE_NULL");
+            throw new InvalidRequestException("AMOUNT_CANNOT_BE_NULL");
         }
         if (productRequestDto.getAmount() <= 0) {
-            throw new InvalidRequest("AMOUNT_SHOULD_BE_ABOVE_ZERO");
+            throw new InvalidRequestException("AMOUNT_SHOULD_BE_ABOVE_ZERO");
         }
         if (productRequestDto.getQuantity() == null) {
-            throw new InvalidRequest("QUANTITY_CANNOT_BE_NULL");
+            throw new InvalidRequestException("QUANTITY_CANNOT_BE_NULL");
         }
         if (productRequestDto.getQuantity() <= 0) {
-            throw new InvalidRequest("QUANTITY_SHOULD_BE_ABOVE_ZERO");
+            throw new InvalidRequestException("QUANTITY_SHOULD_BE_ABOVE_ZERO");
         }
         if (productRequestDto.getDescription().equals("")) {
-            throw new InvalidRequest("DESCRIPTION_CANNOT_BE_NULL");
+            throw new InvalidRequestException("DESCRIPTION_CANNOT_BE_NULL");
         }
         if (!(productRepository.existsById(productRequestDto.getProductId()))) {
             throw new ProductNotFoundException("INVALID_PRODUCT_ID_PRODUCT_NOT_FOUND");
         }
         if (!(userRepository.existsById(productRequestDto.getUserId()))) {
-            throw new UserNotFound("INVALID_USER_ID_USER_NOT_FOUND");
+            throw new UserNotFoundException("INVALID_USER_ID_USER_NOT_FOUND");
         }
     }
 

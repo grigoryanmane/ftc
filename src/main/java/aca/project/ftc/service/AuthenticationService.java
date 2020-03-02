@@ -3,9 +3,8 @@ package aca.project.ftc.service;
 import aca.project.ftc.auth.JwtHelper;
 import aca.project.ftc.auth.JwtUserDetailsService;
 import aca.project.ftc.exception.ExistingUserException;
-import aca.project.ftc.exception.InvalidParameters;
-import aca.project.ftc.exception.UnauthorizedRequest;
-import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.exception.InvalidParameterException;
+import aca.project.ftc.exception.UnauthorizedRequestException;
 import aca.project.ftc.model.constants.Gender;
 import aca.project.ftc.model.constants.Region;
 import aca.project.ftc.model.dto.request.user.SignupRequest;
@@ -61,7 +60,7 @@ public class AuthenticationService {
         try {
             authenticate(user.getUsername(), signupRequest.getPassword());
         } catch (Exception e) {
-            throw new UnauthorizedRequest("INVALID_CREDENTIALS");
+            throw new UnauthorizedRequestException("INVALID_CREDENTIALS");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
@@ -74,7 +73,7 @@ public class AuthenticationService {
         try {
             authenticate(authenticationRequestDto.getUsername(), authenticationRequestDto.getPassword());
         } catch (Exception e) {
-            throw new UnauthorizedRequest("INVALID_CREDENTIALS");
+            throw new UnauthorizedRequestException("INVALID_CREDENTIALS");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDto.getUsername());
@@ -84,14 +83,14 @@ public class AuthenticationService {
         return new AuthenticationResponseDto(userResponseDto, token);
     }
 
-    public void authenticate(String username, String password) throws UnauthorizedRequest {
+    public void authenticate(String username, String password) throws UnauthorizedRequestException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
             log.error("");
-            throw new UnauthorizedRequest("USER_DISABLED", e);
+            throw new UnauthorizedRequestException("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedRequest("INVALID_CREDENTIALS", e);
+            throw new UnauthorizedRequestException("INVALID_CREDENTIALS", e);
         }
     }
 
@@ -140,7 +139,7 @@ public class AuthenticationService {
         if (matcher.matches()) {
             return true;
         }
-        throw new InvalidParameters("INVALID_USERNAME_PARAMETER");
+        throw new InvalidParameterException("INVALID_USERNAME_PARAMETER");
     }
 
     public boolean isValidPassword(String password) {
@@ -152,7 +151,7 @@ public class AuthenticationService {
                 && !password.contains(" ")) {
             return true;
         }
-        throw new InvalidParameters("INVALID_PASSWORD_PARAMETER");
+        throw new InvalidParameterException("INVALID_PASSWORD_PARAMETER");
     }
 
     public boolean isValidFirstName(String firstName) {
@@ -160,7 +159,7 @@ public class AuthenticationService {
         Pattern pattern = Pattern.compile(regex);
         Matcher firstNameMatches = pattern.matcher(firstName);
         if ((!firstNameMatches.matches() || firstName.length() < 3)) {
-            throw new InvalidParameters("INVALID_FIRSTNAME_PARAMETER");
+            throw new InvalidParameterException("INVALID_FIRSTNAME_PARAMETER");
         }
         return true;
     }
@@ -170,7 +169,7 @@ public class AuthenticationService {
         Pattern pattern = Pattern.compile(regex);
         Matcher lastNameMatches = pattern.matcher(lastName);
         if ((!lastNameMatches.matches() || lastName.length() < 3)) {
-            throw new InvalidParameters("INVALID_LASTNAME_PARAMETER");
+            throw new InvalidParameterException("INVALID_LASTNAME_PARAMETER");
         }
         return true;
     }
@@ -180,7 +179,7 @@ public class AuthenticationService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
         if (!matcher.matches()) {
-            throw new InvalidParameters("INVALID_PHONENUMBER_PARAMETER");
+            throw new InvalidParameterException("INVALID_PHONENUMBER_PARAMETER");
         }
         return true;
     }
@@ -190,7 +189,7 @@ public class AuthenticationService {
             Date sdf = new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
             return true;
         } catch (ParseException e) {
-            throw new InvalidParameters("INVALID_BIRTHDATE_PARAMETER");
+            throw new InvalidParameterException("INVALID_BIRTHDATE_PARAMETER");
         }
     }
 
@@ -199,7 +198,7 @@ public class AuthenticationService {
                 .map(Region::name)
                 .collect(Collectors.toSet())
                 .contains(region.toUpperCase())) {
-            throw new InvalidParameters("INVALID_REGION_PARAMETER");
+            throw new InvalidParameterException("INVALID_REGION_PARAMETER");
         }
         return true;
     }
@@ -209,7 +208,7 @@ public class AuthenticationService {
                 .map(Gender::name)
                 .collect(Collectors.toSet())
                 .contains(gender.toUpperCase())) {
-            throw new InvalidParameters("INVALID_GENDER_PARAMETER");
+            throw new InvalidParameterException("INVALID_GENDER_PARAMETER");
         }
         return true;
     }

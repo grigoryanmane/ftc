@@ -3,7 +3,10 @@ package aca.project.ftc.repository;
 import aca.project.ftc.model.constants.NotificationStatus;
 import aca.project.ftc.model.entity.NotificationModel;
 import aca.project.ftc.model.entity.UserProductModel;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +18,9 @@ public interface NotificationRepository extends CrudRepository<NotificationModel
     @Override
     boolean existsById(Long id);
 
-    Optional<NotificationModel> findAllByUserProductIdAndStatus(Long id, NotificationStatus accepted);
+    Optional<NotificationModel> findByUserProductIdAndStatusIn(Long id, List<NotificationStatus> status);
 
-    List<NotificationModel> findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(Long id, Boolean isActive, NotificationStatus notificationStatusAccepted, NotificationStatus notificationStatusRejected);
+    List<NotificationModel> findAllBySenderIdAndIsActiveAndStatusInOrderByUpdatedAtDesc(Long id, Boolean isActive,List<NotificationStatus> status);
 
     List<NotificationModel> findAllByReceiverIdAndIsActiveAndStatusIsOrderByUpdatedAtDesc(Long id, Boolean isActive, NotificationStatus notificationStatusPending);
 
