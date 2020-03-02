@@ -86,7 +86,6 @@ public class NotificationService {
         }
         return notificationResponseDtoList;
     }
-
     public NotificationResponseDto editNotification(NotificationEditRequestDto notificationEditRequestDto, Long id) {
         validateEditRequest(notificationEditRequestDto);
         if (notificationRepository.existsById(id)) {
