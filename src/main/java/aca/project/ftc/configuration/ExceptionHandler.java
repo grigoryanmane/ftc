@@ -29,8 +29,8 @@ public class ExceptionHandler {
     }
 
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<ErrorResponse> handleException(UserNotFound ex) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(UserNotFoundException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -41,21 +41,21 @@ public class ExceptionHandler {
         return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidParameters.class)
-    public ResponseEntity<ErrorResponse> handleException(InvalidParameters ex) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<ErrorResponse> handleException(InvalidParameterException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST, ex.getErrorParamList());
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidRequest.class)
-    public ResponseEntity<ErrorResponse> handleException(InvalidRequest ex) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<ErrorResponse> handleException(InvalidRequestException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.CONFLICT.name(), ex.getMessage(), HttpStatus.CONFLICT);
     }
 
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UnauthorizedRequest.class)
-    public ResponseEntity<ErrorResponse> handleException(UnauthorizedRequest ex) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(UnauthorizedRequestException.class)
+    public ResponseEntity<ErrorResponse> handleException(UnauthorizedRequestException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.UNAUTHORIZED.name(), ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
@@ -66,8 +66,8 @@ public class ExceptionHandler {
         return this.handleErrorResponse(HttpStatus.BAD_REQUEST.name(), ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(NotificationNotFound.class)
-    public ResponseEntity<ErrorResponse> handleException(NotificationNotFound ex) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(NotificationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(NotificationNotFoundException ex) {
         log.error("Received {} exception with message {}", ex.getClass().getSimpleName(), ex.getMessage());
         return this.handleErrorResponse(HttpStatus.NOT_FOUND.name(), ex.getMessage(), HttpStatus.NOT_FOUND);
     }

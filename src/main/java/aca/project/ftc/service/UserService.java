@@ -1,8 +1,8 @@
 package aca.project.ftc.service;
 
 
-import aca.project.ftc.exception.UnauthorizedRequest;
-import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.exception.UnauthorizedRequestException;
+import aca.project.ftc.exception.UserNotFoundException;
 import aca.project.ftc.model.constants.Gender;
 import aca.project.ftc.model.constants.Region;
 import aca.project.ftc.model.dto.request.user.AuthenticationRequestDto;
@@ -42,11 +42,11 @@ public class UserService {
             try {
                 authenticationService.authenticate(user.get().getUsername(), userEditRequest.getPassword());
             } catch (Exception e) {
-                throw new UnauthorizedRequest("INVALID_CREDENTIALS");
+                throw new UnauthorizedRequestException("INVALID_CREDENTIALS");
             }
             return validateUserData(userEditRequest, user.get());
         }
-        throw new UserNotFound("USER_NOT_FOUND");
+        throw new UserNotFoundException("USER_NOT_FOUND");
     }
 
     public UserResponseDto resetPassword(ResetRequestDto resetRequestDto, Long id) {
@@ -54,14 +54,14 @@ public class UserService {
             try {
                 authenticationService.authenticate(resetRequestDto.getUsername(), resetRequestDto.getPassword());
             } catch (Exception e) {
-                throw new UserNotFound("INVALID_CREDENTIALS");
+                throw new UserNotFoundException("INVALID_CREDENTIALS");
             }
             UserModel userModel = userRepository.findById(id).get();
             userModel.setPassword(passwordEncoder.encode(resetRequestDto.getNewPassword()));
             userRepository.save(userModel);
             return getUserResponseData(userModel);
         }
-        throw new UserNotFound("INVALID_CREDENTIALS");
+        throw new UserNotFoundException("INVALID_CREDENTIALS");
     }
 
     public Boolean checkUsername(UsernameCheckDto usernameCheckDto) {
@@ -75,13 +75,13 @@ public class UserService {
             try {
                 authenticationService.authenticate(user.get().getUsername(), authenticationRequestDto.getPassword());
             } catch (Exception e) {
-                throw new UnauthorizedRequest("INVALID_CREDENTIALS");
+                throw new UnauthorizedRequestException("INVALID_CREDENTIALS");
             }
             userResponseDto = getUserResponseData(user.get());
             userRepository.deleteById(id);
             return userResponseDto;
         }
-        throw new UserNotFound("USER_NOT_FOUND_WITH_ID_AND_USERNAME");
+        throw new UserNotFoundException("USER_NOT_FOUND_WITH_ID_AND_USERNAME");
 
     }
 
@@ -90,7 +90,7 @@ public class UserService {
         if (userModel.isPresent()) {
             return getUserResponseData(userModel.get());
         }
-        throw new UserNotFound("USER_NOT_FOUND_WITH_USERNAME");
+        throw new UserNotFoundException("USER_NOT_FOUND_WITH_USERNAME");
     }
 
 
