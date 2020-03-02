@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,17 +64,18 @@ public class NotificationService {
     public NotificationResponseDto getNotification(Long id) {
         if (userProductRepository.existsById(id)) {
             try {
-                NotificationModel notificationModel = notificationRepository.findAllByUserProductIdAndStatus(id, NotificationStatus.ACCEPTED).get();
+                NotificationModel notificationModel = notificationRepository.findByUserProductIdAndStatusIn(id, Arrays.asList(NotificationStatus.ACCEPTED,NotificationStatus.CLOSED)).get();
                 return getNotificationResponseDto(notificationModel);
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e.getCause());
+                throw new InvalidRequest(e.getMessage());
             }
         }
         throw new NotificationNotFound("USER_PRODUCT_NOTIFICATION_NOT_FOUND");
     }
 
     public List<NotificationResponseDto> farmerNotification(Long id) {
-        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(id, true, NotificationStatus.ACCEPTED, NotificationStatus.REJECTED);
+        List<NotificationModel> notificationResponseDto = notificationRepository.findAllBySenderIdAndIsActiveAndStatusInOrderByUpdatedAtDesc(id, true, Arrays.asList(NotificationStatus.ACCEPTED, NotificationStatus.REJECTED));
         return getResponseList(notificationResponseDto);
     }
 
@@ -112,7 +114,6 @@ public class NotificationService {
     public NotificationResponseDto deleteNotification(Long id) {
         if (notificationRepository.existsById(id)) {
             NotificationModel notificationModel = notificationRepository.findById(id).get();
-            notificationModel.setIsActive(false);
             notificationModel.setStatus(NotificationStatus.CLOSED);
             notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);

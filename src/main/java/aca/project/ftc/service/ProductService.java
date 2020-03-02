@@ -129,12 +129,10 @@ public class ProductService {
             userProductModel.setAmount(productRequestDto.getAmount());
             userProductModel.setQuantity(productRequestDto.getQuantity());
             userProductModel.setDescription(productRequestDto.getDescription());
-            userProductRepository.save(userProductModel);
-            return setUserProductDto(userProductModel);
+            return setUserProductDto(userProductRepository.save(userProductModel));
         }catch (Exception e){
             throw  new CustomException("UNEXPECTED_EXCEPTION: " .concat( e.getMessage()), e.getCause());
         }
-
     }
 
 
