@@ -3,6 +3,7 @@ package aca.project.ftc.service;
 
 import aca.project.ftc.controller.ProductController;
 import aca.project.ftc.model.dto.request.product.ProductRequestDto;
+import aca.project.ftc.model.dto.response.product.ProductListResponseDto;
 import aca.project.ftc.model.dto.response.product.ProductResponseDto;
 import aca.project.ftc.model.entity.ProductModel;
 import aca.project.ftc.model.entity.UserModel;
@@ -45,6 +46,11 @@ public class ProductServiceUnitTest {
         long productId = 2421;
         ProductModel product = new ProductModel();
 
+        Integer page = 2;
+        Integer size =5;
+        Long filterProduct = 4L;
+        Boolean isActive = true;
+
         UserProductModel userProductModel = new UserProductModel();
 
         long userId = 232434;
@@ -62,7 +68,7 @@ public class ProductServiceUnitTest {
         doReturn(userProductModel).when(userProductRepository).save(userProductModel);
 
         // When
-        ProductResponseDto productResponseDto = productService.addProduct(productRequestDto);
+        ProductListResponseDto productListResponseDto = productService.addProduct(productRequestDto, page, size, filterProduct, isActive);
 
         // Then
         verify(productService).validAddRequest(productRequestDto);

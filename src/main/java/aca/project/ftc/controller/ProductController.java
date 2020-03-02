@@ -26,9 +26,13 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping()
-    public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto productRequestDto) {
-        ProductResponseDto productResponseDto = productService.addProduct(productRequestDto);
-        return ResponseEntity.ok(productResponseDto);
+    public ResponseEntity<ProductListResponseDto> addProduct(@RequestBody ProductRequestDto productRequestDto,
+                                                             @RequestParam(value = "page", required = false, defaultValue = "") Integer page,
+                                                             @RequestParam(value = "size", required = false, defaultValue = "") Integer size,
+                                                             @RequestParam(value = "productId", required = false, defaultValue = "") Long productId,
+                                                             @RequestParam(value = "isActive", required = false, defaultValue = "") Boolean isActive) {
+        ProductListResponseDto productListResponseDto = productService.addProduct(productRequestDto, page, size, productId, isActive);
+        return ResponseEntity.ok(productListResponseDto);
     }
 
     @GetMapping(value = "/{id}")
@@ -54,10 +58,10 @@ public class ProductController {
     @PutMapping(value = "/{id}", params = {"page", "size", "productId", "isActive"})
     public ResponseEntity<ProductListResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto,
                                                               @PathVariable Long id,
-                                                              @RequestParam("page") Integer page,
-                                                              @RequestParam("size") Integer size,
-                                                              @RequestParam("productId") Long productId,
-                                                              @RequestParam("isActive") Boolean isActive) {
+                                                              @RequestParam(value = "page", required = false, defaultValue = "") Integer page,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "") Integer size,
+                                                              @RequestParam(value = "productId", required = false, defaultValue = "") Long productId,
+                                                              @RequestParam(value = "isActive", required = false, defaultValue = "") Boolean isActive) {
         ProductListResponseDto productListResponseDto = productService.editProduct(productRequestDto, id, page, size, productId, isActive);
         return ResponseEntity.ok(productListResponseDto);
     }
@@ -67,11 +71,5 @@ public class ProductController {
         ProductResponseDto productResponseDto = productService.deleteProduct(id);
         return ResponseEntity.ok(productResponseDto);
     }
-
-//    @PostMapping(value = "/filter")
-//    public ResponseEntity<List<ProductResponseDto>> filterByName(@RequestBody ProductFilterRequestDto productFilterRequestDto) {
-//        List<ProductResponseDto> userProductModel = productService.filter(productFilterRequestDto);
-//        return ResponseEntity.ok(userProductModel);
-//    }
 
 }
