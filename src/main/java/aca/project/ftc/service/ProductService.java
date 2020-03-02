@@ -35,14 +35,14 @@ public class ProductService {
 
         if (userProductRepository.existsById(id)) {
             UserProductModel userProductModel = userProductRepository.findById(id).get();
-            if (productRequestDto.getAmount() != null ) {
-                if(productRequestDto.getAmount() <=0){
+            if (productRequestDto.getAmount() != null) {
+                if (productRequestDto.getAmount() <= 0) {
                     throw new InvalidParameterException("AMOUNT_SHOULD_BE_ABOVE_ZERO");
                 }
                 userProductModel.setAmount(productRequestDto.getAmount());
             }
             if (productRequestDto.getQuantity() != null) {
-                if(productRequestDto.getQuantity() <=0){
+                if (productRequestDto.getQuantity() <= 0) {
                     throw new InvalidParameterException("QUANTITY_SHOULD_BE_ABOVE_ZERO");
                 }
                 userProductModel.setQuantity(productRequestDto.getQuantity());
@@ -55,6 +55,7 @@ public class ProductService {
         }
         throw new UserNotFoundException("USER_NOT_FOUND");
     }
+
     public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size, Long productId, Boolean isActive) {
         if (page == null) {
             page = 0;
@@ -120,8 +121,8 @@ public class ProductService {
     }
 
 
-    public ProductResponseDto addProduct(ProductRequestDto productRequestDto) {
-        try{
+    public ProductListResponseDto addProduct(ProductRequestDto productRequestDto, Integer page, Integer size, Long productId, Boolean isActive) {
+        try {
             validAddRequest(productRequestDto);
             UserProductModel userProductModel = new UserProductModel();
             userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
@@ -129,9 +130,10 @@ public class ProductService {
             userProductModel.setAmount(productRequestDto.getAmount());
             userProductModel.setQuantity(productRequestDto.getQuantity());
             userProductModel.setDescription(productRequestDto.getDescription());
-            return setUserProductDto(userProductRepository.save(userProductModel));
-        }catch (Exception e){
-            throw  new CustomException("UNEXPECTED_EXCEPTION: " .concat( e.getMessage()), e.getCause());
+            userProductRepository.save(userProductModel);
+            return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
+        } catch (Exception e) {
+            throw new CustomException("UNEXPECTED_EXCEPTION: ".concat(e.getMessage()), e.getCause());
         }
     }
 
@@ -175,7 +177,7 @@ public class ProductService {
 
 
     public void validAddRequest(ProductRequestDto productRequestDto) {
-        if (productRequestDto.getUserId() == null ) {
+        if (productRequestDto.getUserId() == null) {
             throw new InvalidRequestException("USER_ID_CANNOT_BE_NULL");
         }
         if (productRequestDto.getProductId() == null) {
