@@ -154,6 +154,7 @@ public class NotificationService {
         }
     }
 
+
     public void validateEditRequest(NotificationEditRequestDto notificationEditRequestDto) {
 
         if ((notificationEditRequestDto.getStatus() == null)) {
