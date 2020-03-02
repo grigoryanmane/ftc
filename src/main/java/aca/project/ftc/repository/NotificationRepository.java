@@ -14,11 +14,14 @@ public interface NotificationRepository extends CrudRepository<NotificationModel
 
     @Override
     boolean existsById(Long id);
+
     Optional<NotificationModel> findAllByUserProductIdAndStatus(Long id, NotificationStatus accepted);
 
     List<NotificationModel> findAllBySenderIdAndIsActiveAndStatusIsOrStatusIsOrderByUpdatedAtDesc(Long id, Boolean isActive, NotificationStatus notificationStatusAccepted, NotificationStatus notificationStatusRejected);
 
     List<NotificationModel> findAllByReceiverIdAndIsActiveAndStatusIsOrderByUpdatedAtDesc(Long id, Boolean isActive, NotificationStatus notificationStatusPending);
+
+    boolean existsByUserProductIdAndSenderIdAndReceiverId(Long userProductId, Long senderId, Long receiverId);
 
     void deleteAllByReceiverId(Long id);
 

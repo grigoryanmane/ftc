@@ -1,8 +1,6 @@
 package aca.project.ftc.service;
 
-import aca.project.ftc.exception.InvalidRequest;
-import aca.project.ftc.exception.NotificationNotFound;
-import aca.project.ftc.exception.UserNotFound;
+import aca.project.ftc.exception.*;
 import aca.project.ftc.model.constants.NotificationStatus;
 import aca.project.ftc.model.dto.request.notification.NotificationEditRequestDto;
 import aca.project.ftc.model.dto.request.notification.NotificationRequestDto;
@@ -19,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -43,9 +43,8 @@ public class NotificationService {
     private ProductRepository productRepository;
 
     public NotificationResponseDto addNotification(NotificationRequestDto notificationRequestDto) {
-        if (userRepository.existsById(notificationRequestDto.getReceiverId())
-                && userRepository.existsById(notificationRequestDto.getSenderId())
-                && userProductRepository.existsById(notificationRequestDto.getUserProductId())) {
+        validateAddNotification(notificationRequestDto);
+        try {
             NotificationModel notificationModel = new NotificationModel();
             notificationModel.setReceiver(userRepository.findById(notificationRequestDto.getReceiverId()).get());
             notificationModel.setSender(userRepository.findById(notificationRequestDto.getSenderId()).get());
@@ -54,9 +53,9 @@ public class NotificationService {
             notificationModel.setStatus(NotificationStatus.PENDING);
             notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);
+        } catch (Exception e) {
+            throw new CustomException("UNEXPECTED_ERROR: ".concat(e.getLocalizedMessage()), e.getCause());
         }
-        //TODO::Validate one by one
-        throw new InvalidRequest("INVALID_ADD_NOTIFICATION_REQUEST");
     }
 
     public NotificationResponseDto getNotification(Long id) {
@@ -89,6 +88,7 @@ public class NotificationService {
     }
 
     public NotificationResponseDto editNotification(NotificationEditRequestDto notificationEditRequestDto, Long id) {
+        validateEditRequest(notificationEditRequestDto);
         if (notificationRepository.existsById(id)) {
             NotificationModel notificationModel = notificationRepository.findById(id).get();
             notificationModel.setStatus(NotificationStatus.valueOf(notificationEditRequestDto.getStatus().toUpperCase()));
@@ -111,8 +111,20 @@ public class NotificationService {
             notificationRepository.save(notificationModel);
             return getNotificationResponseDto(notificationModel);
         }
-        //TODO:: REMOVE AND CHANGE THE EXCEPTION
-        throw new UserNotFound("Invalid Notification");
+        throw new NotificationNotFound("NOTIFICATION_NOT_FOUND");
+    }
+
+    public void validateEditRequest(NotificationEditRequestDto notificationEditRequestDto) {
+
+        if ((notificationEditRequestDto.getStatus() == null)) {
+            throw new InvalidRequest("NOTIFICATION_STATUS_CANNOT_BE_NULL");
+        }
+        if (!Arrays.stream(NotificationStatus.values())
+                .map(NotificationStatus::name)
+                .collect(Collectors.toSet())
+                .contains(notificationEditRequestDto.getStatus().toUpperCase())) {
+            throw new InvalidParameters("INVALID_NOTIFICATION_STATUS_PARAMETER");
+        }
     }
 
     public NotificationResponseDto getNotificationResponseDto(NotificationModel notificationModel) {
@@ -131,4 +143,31 @@ public class NotificationService {
         return notificationResponseDto;
     }
 
+    public void validateAddNotification(NotificationRequestDto notificationRequestDto) {
+        if (notificationRequestDto.getUserProductId() == null) {
+            throw new InvalidRequest("USER_PRODUCT_ID_CANNOT_BE_NULL");
+        }
+        if (notificationRequestDto.getReceiverId() == null) {
+            throw new InvalidRequest("RECEIVER_ID_CANNOT_BE_NULL");
+        }
+        if (notificationRequestDto.getSenderId() == null) {
+            throw new InvalidRequest("SENDER_ID_CANNOT_BE_NULL");
+        }
+        if (!userRepository.existsById(notificationRequestDto.getReceiverId())) {
+            throw new UserNotFound("NOTIFICATION_RECEIVER_NOT_FOUND");
+        }
+        if (!userRepository.existsById(notificationRequestDto.getSenderId())) {
+            throw new UserNotFound("NOTIFICATION_SENDER_NOT_FOUND");
+        }
+        if (!userProductRepository.existsById(notificationRequestDto.getUserProductId())) {
+            throw new ProductNotFoundException("NOTIFICATION_PRODUCT_NOT_FOUND");
+        }
+        if (notificationRepository.existsByUserProductIdAndSenderIdAndReceiverId(notificationRequestDto.getUserProductId(), notificationRequestDto.getSenderId(), notificationRequestDto.getReceiverId())) {
+            throw new InvalidRequest("USER_HAS_ALREADY_APPLIED_FOR_THIS_PRODUCT");
+        }
+    }
+
+
 }
+
+

@@ -56,7 +56,7 @@ public class AuthenticationService {
     @Autowired
     private UserService userService;
 
-    public AuthenticationResponseDto signup(SignupRequest signupRequest)  {
+    public AuthenticationResponseDto signup(SignupRequest signupRequest) {
         UserModel user = setUserData(signupRequest);
         try {
             authenticate(user.getUsername(), signupRequest.getPassword());
@@ -174,6 +174,7 @@ public class AuthenticationService {
         }
         return true;
     }
+
     public boolean isValidPhoneNumber(String phoneNumber) {
         String regex = "(\\+374)[0-9]{8}";
         Pattern pattern = Pattern.compile(regex);

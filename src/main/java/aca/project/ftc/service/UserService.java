@@ -93,6 +93,7 @@ public class UserService {
         throw new UserNotFound("USER_NOT_FOUND_WITH_USERNAME");
     }
 
+
     public UserModel validateUserData(UserEditRequest userEditRequest, UserModel userModel) {
 
         if (!userEditRequest.getFirstName().isEmpty()) {
