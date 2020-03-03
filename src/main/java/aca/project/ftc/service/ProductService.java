@@ -57,14 +57,8 @@ public class ProductService {
     }
 
     public ProductListResponseDto getUserProductList(Long id, Integer page, Integer size, Long productId, Boolean isActive) {
-        if (page == null) {
-            page = 0;
-        }
-        if (size == null) {
-            size = 10;
-        }
         ProductListResponseDto productListResponseDto = new ProductListResponseDto();
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
         Page<UserProductModel> userProductModel = filterUserProducts(id, productId, isActive, pageable);
         List<UserProductModel> userProductModelList = userProductModel.toList();
         if (!userProductModel.isEmpty()) {
@@ -78,14 +72,8 @@ public class ProductService {
     }
 
     public ProductListResponseDto getAllProducts(Integer page, Integer size, Long productId) {
-        if (page == null) {
-            page = 0;
-        }
-        if (size == null) {
-            size = 10;
-        }
         ProductListResponseDto productListResponseDto = new ProductListResponseDto();
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
         Page<UserProductModel> userProductModel = filterAllProducts(productId, true, pageable);
         productListResponseDto.setTotalElements(userProductModel.getTotalElements());
         productListResponseDto.setPageCount(userProductModel.getTotalPages());
@@ -110,31 +98,26 @@ public class ProductService {
     }
 
     public ProductResponseDto deleteProduct(Long id) {
-
-        if (userProductRepository.existsById(id)) {
-            UserProductModel userProductModel = userProductRepository.findById(id).get();
-            ProductResponseDto productResponseDto = setUserProductDto(userProductModel);
-            userProductRepository.deleteById(id);
-            return productResponseDto;
+        if (!userProductRepository.existsById(id)) {
+            throw new ProductNotFoundException("PRODUCT_NOT_FOUND");
         }
-        throw new ProductNotFoundException("PRODUCT_NOT_FOUND");
+        UserProductModel userProductModel = userProductRepository.findById(id).get();
+        ProductResponseDto productResponseDto = setUserProductDto(userProductModel);
+        userProductRepository.deleteById(id);
+        return productResponseDto;
     }
 
 
     public ProductListResponseDto addProduct(ProductRequestDto productRequestDto, Integer page, Integer size, Long productId, Boolean isActive) {
-        try {
-            validAddRequest(productRequestDto);
-            UserProductModel userProductModel = new UserProductModel();
-            userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
-            userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
-            userProductModel.setAmount(productRequestDto.getAmount());
-            userProductModel.setQuantity(productRequestDto.getQuantity());
-            userProductModel.setDescription(productRequestDto.getDescription());
-            userProductRepository.save(userProductModel);
-            return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
-        } catch (Exception e) {
-            throw new CustomException("UNEXPECTED_EXCEPTION: ".concat(e.getMessage()), e.getCause());
-        }
+        validAddRequest(productRequestDto);
+        UserProductModel userProductModel = new UserProductModel();
+        userProductModel.setProduct(productRepository.findById(productRequestDto.getProductId()).get());
+        userProductModel.setUser(userRepository.findById(productRequestDto.getUserId()).get());
+        userProductModel.setAmount(productRequestDto.getAmount());
+        userProductModel.setQuantity(productRequestDto.getQuantity());
+        userProductModel.setDescription(productRequestDto.getDescription());
+        userProductRepository.save(userProductModel);
+        return getUserProductList(userProductModel.getUser().getId(), page, size, productId, isActive);
     }
 
 
@@ -187,13 +170,13 @@ public class ProductService {
             throw new InvalidRequestException("AMOUNT_CANNOT_BE_NULL");
         }
         if (productRequestDto.getAmount() <= 0) {
-            throw new InvalidRequestException("AMOUNT_SHOULD_BE_ABOVE_ZERO");
+            throw new InvalidParameterException("AMOUNT_SHOULD_BE_ABOVE_ZERO");
         }
         if (productRequestDto.getQuantity() == null) {
             throw new InvalidRequestException("QUANTITY_CANNOT_BE_NULL");
         }
         if (productRequestDto.getQuantity() <= 0) {
-            throw new InvalidRequestException("QUANTITY_SHOULD_BE_ABOVE_ZERO");
+            throw new InvalidParameterException("QUANTITY_SHOULD_BE_ABOVE_ZERO");
         }
         if (productRequestDto.getDescription().equals("")) {
             throw new InvalidRequestException("DESCRIPTION_CANNOT_BE_NULL");
